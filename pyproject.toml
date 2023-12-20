@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "point-cloud-collector"
+version = "0.1.0"
+description = ""
+authors = ["HideBa <baba.papa1120.ba@gmail.com>"]
+readme = "README.md"
+packages = [{ include = "point_cloud_collector" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+flask = "^3.0.0"
+click = "^8.1.7"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.12.0"
+mypy = "^1.7.1"
+pytest = "^7.4.3"
+isort = "^5.13.2"
+flake8 = "^6.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+files = ["src/**/*.py"]
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+ignore_missing_imports = true
+check_untyped_defs = true
+disallow_untyped_calls = true
+disallow_subclassing_any = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_untyped_decorators = true
+warn_unused_ignores = true
+strict_optional = true
+strict_param_types = true
+warn_untyped_fields = true
