@@ -1,6 +1,7 @@
 import unittest
 from municipality import city_polygon
 from shapely.geometry import Polygon
+from geopandas import GeoDataFrame
 
 
 class TestMunicipality(unittest.TestCase):
@@ -124,13 +125,13 @@ class TestMunicipality(unittest.TestCase):
             ],
         )
         result = city_polygon("delft")
-        self.assertIsInstance(result, Polygon)
-        self.assertEqual(result, delft_polygon)
+        self.assertIsInstance(result, GeoDataFrame)
+        self.assertEqual(result.iloc[0]["geometry"], delft_polygon)
 
         # Test case2: Valid city name with Capital letters
         result = city_polygon("Delft")
-        self.assertIsInstance(result, Polygon)
-        self.assertEqual(result, delft_polygon)
+        self.assertIsInstance(result, GeoDataFrame)
+        self.assertEqual(result.iloc[0]["geometry"], delft_polygon)
 
         # Test case 2: Invalid city name
         city_name = "Nonexistent City"

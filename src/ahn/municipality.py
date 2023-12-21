@@ -17,4 +17,4 @@ def city_polygon(city_name: str) -> GeoDataFrame:
     if filtered_df.empty:
         raise ValueError(f"City {city_name} not found.")
 
-    return filtered_df.iloc[0]["geometry"]
+    return filtered_df
