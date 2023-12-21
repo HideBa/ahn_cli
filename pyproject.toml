@@ -7,9 +7,13 @@ readme = "README.md"
 packages = [{ include = "point_cloud_collector" }]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.9, <3.12"
 flask = "^3.0.0"
 click = "^8.1.7"
+numpy = "^1.26.2"
+pdal = "^3.2.3"
+geopandas = "^0.14.1"
+shapely = "^2.0.2"
 
 
 [tool.poetry.group.dev.dependencies]
