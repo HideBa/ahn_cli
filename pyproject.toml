@@ -4,7 +4,8 @@ version = "0.1.0"
 description = ""
 authors = ["HideBa <baba.papa1120.ba@gmail.com>"]
 readme = "README.md"
-packages = [{ include = "point_cloud_collector" }]
+packages = [{ include = "point_cloud_collector", from = "pget" }]
+include = ["pget/*", "pget/**/*"]
 
 [tool.poetry.dependencies]
 python = ">=3.9, <3.12"
@@ -28,7 +29,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.mypy]
-files = ["src/**/*.py"]
+files = ["pget/**/*.py"]
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
 ignore_missing_imports = true
@@ -42,3 +43,9 @@ warn_unused_ignores = true
 strict_optional = true
 strict_param_types = true
 warn_untyped_fields = true
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["pget", "pget.*"]

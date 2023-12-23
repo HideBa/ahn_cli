@@ -1,4 +1,4 @@
-PACKAGE_DIR := src
+PACKAGE_DIR := pget
 
 .PHONY: install
 install:
