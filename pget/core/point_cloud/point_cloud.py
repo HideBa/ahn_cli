@@ -1,46 +1,38 @@
-from core.interface.point_cloud import IPointCloud
+from typing import Self
+import numpy as np
+import laspy
+from laspy.lasappender import LasAppender
 
 
-class LazPointCloud(IPointCloud):
-    def __init__(self, pdata: bytearray):
-        self.pdata = pdata
+class LasPointCloud:
+    def __init__(self, las: laspy.LasData):
+        self.las = las
 
-    def keep_classes(self, classes: list[int]) -> bytearray:
-        pipeline = [
-            {
-                "type": "filters.range",
-                "limits": "Classification[{}]".format(
-                    ",".join(str(c) for c in classes)
-                ),
-            }
-        ]
-        return bytearray()
+    def keep_classes(self, classes: list[int]) -> Self:
+        # Build composite condition to filter out elements
+        condition = np.isin(self.las.classification, classes)  # type: ignore
+        self.las = self.las[condition]
+        return self
 
-    def exclude_classes(self, classes: list[int]) -> bytearray:
-        pipeline = [
-            {
-                "type": "filters.range",
-                "limits": "Classification![{}]".format(
-                    ",".join(str(c) for c in classes)
-                ),
-            }
-        ]
-        return bytearray()
+    def exclude_classes(self, classes: list[int]) -> Self:
+        # Build composite condition to filter out elements
+        condition = np.isin(self.las.classification, classes, invert=True)  # type: ignore
+        self.las = self.las[condition]
+        return self
 
-    def merge(self, others: list[bytearray]) -> bytearray:
-        pipeline = [
-            {
-                "type": "filters.merge",
-                "inputs": [
-                    self.pdata,
-                    *[other for other in others],
-                ],
-            }
-        ]
-        return bytearray()
+    def merge(self, others: laspy.LasData) -> Self:
+        # appender = LasAppender
+        # self.pc_data.append
+        dims = self.las.point_format.dimension_names
+        self.las = np.concatenate((self.las, others.points))
 
-    def clip(self, clip_file: str) -> bytearray:
-        return bytearray()
+        return self
+
+    def build(self) -> laspy.LasData:
+        return self.las
+
+    def clip(self, clip_file: str) -> np.ndarray:
+        return np.array([])
 
     def write(self, output: str) -> None:
         return super().write(output)

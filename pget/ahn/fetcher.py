@@ -4,10 +4,9 @@ from threading import Thread
 from urllib import request
 from urllib.parse import urlparse
 from .geotiles import ahn_subunit_indicies_of_city
-from pget.core.interface.fetcher import IFetcher
 
 
-class Fetcher(IFetcher):
+class Fetcher:
     def __init__(self, base_url: str, city_name: str):
         if not self._check_valid_url(base_url):
             raise ValueError("Invalid URL")

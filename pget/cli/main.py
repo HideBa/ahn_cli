@@ -63,4 +63,5 @@ Options:
     "-v", "--version", help="Display the version number of the tool and exit."
 )
 def main(dtm, city, output, include_class, exclude_class, help, clip_file, version):
+    # TODO: if include_class and exclude_class are conflicting, raise an error
     pass

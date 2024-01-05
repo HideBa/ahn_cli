@@ -356,6 +356,28 @@ MarkupSafe = ">=2.0"
 i18n = ["Babel (>=2.7)"]
 
 [[package]]
+name = "laspy"
+version = "2.5.3"
+description = "Native Python ASPRS LAS read/write library"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "laspy-2.5.3.tar.gz", hash = "sha256:4ad698914358ea5a096da52e69bceccd320d9ddfb367480a5c2b5e086db812b7"},
+]
+
+[package.dependencies]
+numpy = "*"
+
+[package.extras]
+cli = ["rich (>=10.11.0)", "typer[all] (>=0.8.0)"]
+dev = ["black (==22.3.0)", "coverage", "isort (==5.11.5)", "m2r2", "nox", "pytest", "pytest-benchmark", "rangehttpserver", "sphinx", "sphinx-rtd-theme"]
+laszip = ["laszip (>=0.2.1,<0.3.0)"]
+lazrs = ["lazrs (>=0.5.0,<0.6.0)"]
+pyproj = ["pyproj"]
+requests = ["requests"]
+
+[[package]]
 name = "markupsafe"
 version = "2.1.3"
 description = "Safely add untrusted strings to HTML/XML markup."
@@ -955,4 +977,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9, <3.12"
-content-hash = "caf5b8e20cd9b775c655425b46568f62a289f25af3cf35e006c796b604c08628"
+content-hash = "5c4b63851b68752cf698318cc45eac64f93268d73feff6fad30b889aff004145"

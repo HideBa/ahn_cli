@@ -1,7 +1,6 @@
 import os
 import tempfile
 from ahn.fetcher import Fetcher
-from core.interface.fetcher import IFetcher
 
 
 class Fetch:
@@ -19,3 +18,6 @@ class Fetch:
                 name = temp_file.name
                 print("File name: ", name)
                 print("File size: ", os.path.getsize(name))
+
+    def clip_by_city(self, city_name: str) -> None:
+
