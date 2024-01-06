@@ -1,9 +1,10 @@
 import os
-from queue import Queue
-from threading import Thread
-from urllib import request
+import tempfile
+from threading import Lock, Thread
+import threading
 from urllib.parse import urlparse
 from .geotiles import ahn_subunit_indicies_of_city
+import requests
 
 
 class Fetcher:
@@ -14,26 +15,27 @@ class Fetcher:
         self.city_name = city_name
         self.urls = self._construct_urls()
 
-    def fetch(self) -> list[bytearray]:
-        def req(url: str, queue: Queue) -> None:
-            content = request.urlopen(url).read()
-            queue.put(content)
-            return
+    def fetch(self) -> dict:
+        def req(url: str, results: dict, lock: Lock) -> None:
+            res = requests.get(url, stream=True)
+            with tempfile.NamedTemporaryFile(
+                delete=False, mode="w+b", suffix=".tmp"
+            ) as temp_file:
+                for chunk in res.iter_content(chunk_size=1024):
+                    temp_file.write(chunk)
+                with lock:
+                    results[url] = temp_file.name
 
-        data_queue: Queue = Queue()
+        results: dict = {}
+        lock = threading.Lock()
         threads = []
         for url in self.urls:
-            thread = Thread(target=req, args=(url, data_queue))
-            thread.start()
+            thread = Thread(target=req, args=(url, results, lock))
             threads.append(thread)
+            thread.start()
         for thread in threads:
             thread.join()
-
-        data = []
-        while not data_queue.empty():
-            data.append(data_queue.get())
-
-        return data
+        return results
 
     def _check_valid_url(self, url: str) -> bool:
         try:
@@ -49,9 +51,3 @@ class Fetcher:
             urls.append(os.path.join(self.base_url + f"{tile_index}.LAZ"))
 
         return urls
-
-
-# if __name__ == "__main__":
-#     fetcher = Fetcher(BASE_URL, "Delft")
-#     data = fetcher.fetch()
-#     print(data)

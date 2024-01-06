@@ -1,12 +1,18 @@
-from typing import Self
+from typing import BinaryIO, Self
 import numpy as np
 import laspy
 from laspy.lasappender import LasAppender
 
+from pget.core.point_cloud.polygon import DutchCity
+from pget.core.point_cloud.transformer import tranform_polygon
+from shapely.geometry import Polygon
+
 
 class LasPointCloud:
-    def __init__(self, las: laspy.LasData):
+    def __init__(self, las: laspy.LasData, source: BinaryIO, city_polygon_file: str):
         self.las = las
+        self.source = source
+        self.dutch_city = DutchCity(city_polygon_file, "name")
 
     def keep_classes(self, classes: list[int]) -> Self:
         # Build composite condition to filter out elements
@@ -20,19 +26,31 @@ class LasPointCloud:
         self.las = self.las[condition]
         return self
 
-    def merge(self, others: laspy.LasData) -> Self:
-        # appender = LasAppender
-        # self.pc_data.append
-        dims = self.las.point_format.dimension_names
-        self.las = np.concatenate((self.las, others.points))
+    def merge(self, points: laspy.ScaleAwarePointRecord) -> Self:
+        appender = LasAppender(self.source)
+        appender.append_points(points)
+        return self
 
+    def clip_by_city(self, city_name: str) -> Self:
+        city_polygon = self.dutch_city.city_polygon(city_name)
+        polygon_crs = self.dutch_city.city_df.crs
+
+        return self.clip_by_polygon(city_polygon, polygon_crs)
+
+    def clip_by_polygon(self, polygon: Polygon, crs: str | None = None) -> Self:
+        if crs is not None:
+            polygon = tranform_polygon(polygon, crs, "EPSG:28992")
+        if polygon is None:
+            raise ValueError("Failed to reproject polygon")
+        points = self.las.xyz
+        valid_points_indices = np.array([])
+        for i, point in points:
+            if polygon.contains([point[0], point[1]]):
+                valid_points_indices = np.append(valid_points_indices, i)
+        valid_points = self.las.points[valid_points_indices]
+        new_las = laspy.LasData(self.las.header, valid_points)  # type: ignore TODO: fix later
+        self.las = new_las
         return self
 
     def build(self) -> laspy.LasData:
         return self.las
-
-    def clip(self, clip_file: str) -> np.ndarray:
-        return np.array([])
-
-    def write(self, output: str) -> None:
-        return super().write(output)

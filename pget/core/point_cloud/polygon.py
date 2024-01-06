@@ -1,4 +1,5 @@
 import geopandas as gpd
+from shapely.geometry import Polygon
 
 
 class DutchCity:
@@ -7,5 +8,7 @@ class DutchCity:
         self.column_name = column_name
         self.city_df = gpd.read_file(self.filepath)
 
-    def city_polygon(self, city_name: str) -> str:
-        return self.city_df[self.city_df[self.column_name] == city_name].geometry
+    def city_polygon(self, city_name: str) -> Polygon:
+        return Polygon(
+            self.city_df[self.city_df[self.column_name] == city_name].geometry
+        )
