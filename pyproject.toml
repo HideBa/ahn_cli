@@ -15,7 +15,7 @@ numpy = "^1.26.2"
 pdal = "^3.2.3"
 geopandas = "^0.14.1"
 shapely = "^2.0.2"
-laspy = "^2.5.3"
+laspy = {extras = ["lazrs"], version = "^2.5.3"}
 pyvista = "^0.43.1"
 
 

@@ -1,10 +1,12 @@
+import logging
 import os
 import tempfile
-from threading import Lock, Thread
+from threading import Lock
 import threading
 from urllib.parse import urlparse
-from .geotiles import ahn_subunit_indicies_of_city
+from fetcher.geotiles import ahn_subunit_indicies_of_city
 import requests
+from concurrent.futures import ThreadPoolExecutor
 
 
 class Fetcher:
@@ -16,25 +18,26 @@ class Fetcher:
         self.urls = self._construct_urls()
 
     def fetch(self) -> dict:
-        def req(url: str, results: dict, lock: Lock) -> None:
+        logging.info("Start fetching AHN data")
+        logging.info(f"Fetching {len(self.urls)} tiles")
+
+        def req(url: str, nth: int, results: dict, lock: Lock) -> None:
+            logging.info(f"Fetching tile {nth + 1}/{len(self.urls)}")
+            print(f"Fetching tile {nth + 1}/{len(self.urls)}")
             res = requests.get(url, stream=True)
             with tempfile.NamedTemporaryFile(
                 delete=False, mode="w+b", suffix=".tmp"
             ) as temp_file:
-                for chunk in res.iter_content(chunk_size=1024):
+                for chunk in res.iter_content(chunk_size=1024 * 256):
                     temp_file.write(chunk)
                 with lock:
                     results[url] = temp_file.name
 
         results: dict = {}
         lock = threading.Lock()
-        threads = []
-        for url in self.urls:
-            thread = Thread(target=req, args=(url, results, lock))
-            threads.append(thread)
-            thread.start()
-        for thread in threads:
-            thread.join()
+        with ThreadPoolExecutor(max_workers=8) as executor:
+            for i, url in enumerate(self.urls):
+                executor.submit(req, url, i, results, lock)
         return results
 
     def _check_valid_url(self, url: str) -> bool:

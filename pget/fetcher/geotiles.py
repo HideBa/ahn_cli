@@ -1,7 +1,7 @@
 import os
 import geopandas as gpd
 
-from .municipality import city_polygon
+from fetcher.municipality import city_polygon
 
 
 def geotiles() -> gpd.GeoDataFrame:

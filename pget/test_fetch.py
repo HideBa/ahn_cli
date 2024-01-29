@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-from service.fetch import Fetcher
+from pget.process import Fetcher
 
 
 class TestFetch(unittest.TestCase):

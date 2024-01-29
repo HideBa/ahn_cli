@@ -29,4 +29,4 @@ test:
 
 
 run-app:
-	poetry run python $(PACKAGE_DIR)/server/app.py
+	poetry run python $(PACKAGE_DIR)/main.py

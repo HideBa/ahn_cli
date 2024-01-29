@@ -8,8 +8,14 @@
       "name": "Python: Debug test",
       "type": "python",
       "request": "launch",
-      "module": "unittest",
+      // "program": "${workspaceDir}/pget/service/main.py",
       "program": "${workspaceDir}/pget/ahn/test_fetcher.py",
+      // "args": [
+      //   "-c",
+      //   "delft",
+      //   "-o",
+      //   "./out.laz",
+      // ],
       "console": "integratedTerminal",
       "justMyCode": true
     }

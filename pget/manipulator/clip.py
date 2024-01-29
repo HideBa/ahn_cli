@@ -1,5 +1,5 @@
 import numpy as np
-from polygon import DutchCity
+from manipulator.polygon import DutchCity
 import laspy
 
 from transformer import tranform_polygon
