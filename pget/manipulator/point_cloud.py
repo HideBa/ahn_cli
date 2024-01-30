@@ -1,7 +1,8 @@
 from typing import BinaryIO, Self
 import numpy as np
 import laspy
-from laspy.lasappender import LasAppender
+from shapely.geometry import Point
+
 
 from manipulator.polygon import DutchCity
 from manipulator.transformer import tranform_polygon
@@ -25,9 +26,10 @@ class LasPointCloud:
         self.las = self.las[condition]
         return self
 
-    def merge(self, points: laspy.ScaleAwarePointRecord) -> Self:
-        self.las.append_points(points)  # type: ignore
-        return self
+    # def merge(self, points: laspy.ScaleAwarePointRecord) -> Self:
+    #     appender = LasAppender(self.source)
+    #     appender.append_points(points)
+    #     return self
 
     def clip_by_city(self, city_name: str) -> Self:
         city_polygon = self.dutch_city.city_polygon(city_name)
@@ -42,8 +44,9 @@ class LasPointCloud:
             raise ValueError("Failed to reproject polygon")
         points = self.las.xyz
         valid_points_indices = np.array([])
-        for i, point in points:
-            if polygon.contains([point[0], point[1]]):
+        for i, point in enumerate(points):
+            print("progress:", (i / len(points)) * 100, "%")
+            if polygon.contains([Point(point[0], point[1])]):
                 valid_points_indices = np.append(valid_points_indices, i)
         valid_points = self.las.points[valid_points_indices]
         new_las = laspy.LasData(self.las.header, valid_points)  # type: ignore TODO: fix later

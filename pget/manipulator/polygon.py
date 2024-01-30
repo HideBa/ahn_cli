@@ -9,6 +9,7 @@ class DutchCity:
         self.city_df = gpd.read_file(self.filepath)
 
     def city_polygon(self, city_name: str) -> Polygon:
-        return Polygon(
-            self.city_df[self.city_df[self.column_name] == city_name].geometry
-        )
+        record = self.city_df[
+            self.city_df[self.column_name].str.lower() == city_name.lower()
+        ]
+        return record.iloc[0].geometry

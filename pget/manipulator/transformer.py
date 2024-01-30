@@ -8,8 +8,8 @@ def tranform_polygon(
     geometry: shapely.Polygon, source_crs: str, target_crs: str
 ) -> shapely.Polygon | None:
     proj = pyproj.Transformer.from_crs(
-        pyproj.CRS(f"epsg:{source_crs}"),
-        pyproj.CRS(f"epsg:{target_crs}"),
+        pyproj.CRS(source_crs),
+        pyproj.CRS(target_crs),
         always_xy=True,
     ).transform
     if geometry.is_empty:
