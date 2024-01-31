@@ -1,6 +1,6 @@
 from typing import Dict, Union
 import click
-from pyparsing import Any
+from validator import validate_all
 from process import process
 import config
 from typing import Dict, Union, List
@@ -90,15 +90,15 @@ def main(**kwargs: Dict[str, Union[str, int, bool, None]]) -> None:
     )
     clip_file = kwargs.get("clip_file")
     preview = kwargs.get("preview")
-
-    process(
-        config.GEOTILES_BASE_URL,
-        output,
-        city,
-        include_classes,
-        exclude_classes,
-        clip_file,
-    )
+    if validate_all(output, city, include_classes, exclude_classes, clip_file):
+        process(
+            config.GEOTILES_BASE_URL,
+            output,
+            city,
+            include_classes,
+            exclude_classes,
+            clip_file,
+        )
 
 
 if __name__ == "__main__":
