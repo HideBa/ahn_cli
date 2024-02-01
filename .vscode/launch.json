@@ -8,8 +8,8 @@
       "name": "Python: Debug test",
       "type": "python",
       "request": "launch",
-      // "program": "${workspaceDir}/pget/service/main.py",
-      "program": "${workspaceDir}/pget/ahn/test_fetcher.py",
+      // "program": "${workspaceDir}/ahn_cli/service/main.py",
+      "program": "${workspaceDir}/ahn_cli/ahn/test_fetcher.py",
       // "args": [
       //   "-c",
       //   "delft",

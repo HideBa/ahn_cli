@@ -1,4 +1,4 @@
-PACKAGE_DIR := pget
+PACKAGE_DIR := ahn_cli
 
 .PHONY: install
 install:
@@ -13,7 +13,8 @@ lint:
 	poetry run flake8 $(PACKAGE_DIR)
 
 .PHONY: type
-	poetry run mypy $(PACKAGE_DIR)
+type:
+	poetry run mypy $(PACKAGE_DIR)/**/*.py
 
 .PHONY: format
 format:
@@ -27,6 +28,8 @@ sort:
 test:
 	poetry run pytest $(PACKAGE_DIR)
 
+.PHONY: check
+check: lint type test	format sort
 
 run-app:
 	poetry run python $(PACKAGE_DIR)/main.py

@@ -4,8 +4,8 @@ version = "0.1.0"
 description = ""
 authors = ["HideBa <baba.papa1120.ba@gmail.com>"]
 readme = "README.md"
-packages = [{ include = "point_cloud_collector", from = "pget" }]
-include = ["pget/*", "pget/**/*"]
+packages = [{ include = "ahn_cli", from = "ahn_cli" }]
+include = ["ahn_cli/*", "ahn_cli/**/*"]
 
 [tool.poetry.dependencies]
 python = ">=3.9, <3.12"
@@ -15,8 +15,9 @@ numpy = "^1.26.2"
 pdal = "^3.2.3"
 geopandas = "^0.14.1"
 shapely = "^2.0.2"
-laspy = {extras = ["lazrs"], version = "^2.5.3"}
+laspy = { extras = ["lazrs"], version = "^2.5.3" }
 pyvista = "^0.43.1"
+requests = "^2.31.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -25,13 +26,34 @@ mypy = "^1.7.1"
 pytest = "^7.4.3"
 isort = "^5.13.2"
 flake8 = "^6.1.0"
+pre-commit = "^3.6.0"
+types-requests = "^2.31.0.20240125"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.black]
+line-length = 78
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+
 [tool.mypy]
-files = ["pget/**/*.py"]
+files = ["ahn_cli/**/*.py"]
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
 ignore_missing_imports = true
@@ -50,4 +72,4 @@ warn_untyped_fields = true
 include-package-data = true
 
 [tool.setuptools.packages.find]
-include = ["pget", "pget.*"]
+include = ["ahn_cli", "ahn_cli.*"]
