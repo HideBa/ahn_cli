@@ -30,7 +30,7 @@ class Fetcher:
             with tempfile.NamedTemporaryFile(
                 delete=False, mode="w+b", suffix=".tmp"
             ) as temp_file:
-                for chunk in res.iter_content(chunk_size=1024 * 256):
+                for chunk in res.iter_content(chunk_size=1024 * 1024):
                     temp_file.write(chunk)
                 with lock:
                     results[url] = temp_file.name

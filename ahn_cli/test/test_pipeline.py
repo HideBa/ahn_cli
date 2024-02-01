@@ -1,3 +1,4 @@
+import os
 import tempfile
 import unittest
 
@@ -8,9 +9,25 @@ from ahn_cli.manipulator.pipeline import PntCPipeline
 TEST_DATA0 = "./ahn_cli/test/testdata/westervoort0_thinned.las"
 TEST_DATA1 = "./ahn_cli/test/testdata/westervoort1_thinned.las"
 CITY_FILE_PATH = "./ahn_cli/fetcher/data/municipality_simple.geojson"
+WESTERVOORT_FILE_PATH = "./ahn_cli/test/testdata/westervoort.geojson"
 
 
 class TestPipeline(unittest.TestCase):
+    def test_laz(self) -> None:
+        with tempfile.NamedTemporaryFile(suffix=".laz", delete=True) as tmp:
+            # check if file exists
+            self.assertTrue(tmp.name)
+            self.assertTrue(os.path.exists(TEST_DATA0))
+
+            pipeline = PntCPipeline(TEST_DATA0, tmp.name, CITY_FILE_PATH)
+            pipeline.execute()
+
+            with laspy.open(TEST_DATA0) as las:
+                points_before = las.header.point_count
+                las = laspy.read(tmp.name)
+                points_after = las.header.point_count
+                self.assertEqual(points_after, points_before)
+
     def test_decimate(self) -> None:
         with tempfile.NamedTemporaryFile(suffix=".las", delete=True) as tmp:
             pipeline = PntCPipeline(TEST_DATA0, tmp.name, CITY_FILE_PATH)
@@ -93,9 +110,7 @@ class TestPipeline(unittest.TestCase):
     def test_clip_by_arbitrary_polygon(self) -> None:
         with tempfile.NamedTemporaryFile(suffix=".las", delete=True) as tmp:
             pipeline = PntCPipeline(TEST_DATA0, tmp.name, CITY_FILE_PATH)
-            pipeline.clip_by_arbitrary_polygon(
-                "./ahn_cli/test/testdata/westervoort.geojson"
-            )
+            pipeline.clip_by_arbitrary_polygon(WESTERVOORT_FILE_PATH)
             pipeline.execute()
 
             with laspy.open(TEST_DATA0) as las:

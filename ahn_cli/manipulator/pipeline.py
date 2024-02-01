@@ -46,6 +46,12 @@ class PntCPipeline:
             input_path,
             {
                 "type": "writers.las",
+                **(
+                    {"compression": "laszip"}
+                    if output_path.endswith(".laz")
+                    or output_path.endswith("LAZ")
+                    else {}
+                ),
                 "filename": output_path,
             },
         ]
@@ -217,7 +223,8 @@ class PntCPipeline:
         print("Executing pipeline...")
         pipeline_json = json.dumps(self.pipeline_setting)
         print("Pipeline JSON:", pipeline_json)
-        pdal.Pipeline(pipeline_json)
+        pipeline = pdal.Pipeline(pipeline_json)
+        pipeline.execute()
 
         print("Pipeline executed successfully")
 

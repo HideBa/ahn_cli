@@ -70,7 +70,12 @@ Options:
     type=int,
     help="Decimate the point cloud by a given step.",
 )
-@click.option("-p", "--preview", help="Preview the point cloud data in a 3D viewer.")
+@click.option(
+    "-p",
+    "--preview",
+    is_flag=True,
+    help="Preview the point cloud data in a 3D viewer.",
+)
 @click.option(
     "-h",
     "--help",
