@@ -15,7 +15,8 @@ class PntCPipeline:
     Args:
         input_path (str): The path to the input data.
         output_path (str): The path to save the output data.
-        output_extra_dims (list, optional): A list of extra dimensions to include in the output data. Defaults to [].
+        city_filepath (str): The path to the city data file.
+        city_name (str): The name of the city.
 
     Attributes:
         pipeline_setting (list): The configuration settings for the pipeline.
@@ -23,11 +24,16 @@ class PntCPipeline:
     """
 
     def __init__(
-        self, input_path: str, output_path: str, city_filepath: str
+        self,
+        input_path: str,
+        output_path: str,
+        city_filepath: str,
+        city_name: str,
     ) -> None:
         self.pipeline_setting: list[Any] = []
         self._init_pipeline(input_path, output_path)
         self.city_df = gpd.read_file(city_filepath)
+        self.city_name = city_name
 
     def _init_pipeline(self, input_path: str, output_path: str) -> Self:
         """
@@ -36,7 +42,6 @@ class PntCPipeline:
         Args:
             input_path (str): The path to the input data.
             output_path (str): The path to save the output data.
-            output_extra_dims (list, optional): A list of extra dimensions to include in the output data. Defaults to [].
 
         Returns:
             list: The initialized pipeline configuration.
@@ -162,7 +167,7 @@ class PntCPipeline:
         )
         return self
 
-    def clip(self, cityname: str) -> Self:
+    def clip(self) -> Self:
         """
         Clip the point cloud by a polygon.
 
@@ -173,7 +178,7 @@ class PntCPipeline:
             Self: The updated pipeline object.
 
         """
-        city_polygon = self._city_polygon(cityname)
+        city_polygon = self._city_polygon()
         clip_pipe = [
             {
                 "type": "filters.crop",
@@ -213,6 +218,51 @@ class PntCPipeline:
         )
         return self
 
+    def clip_by_radius(self, radius: float) -> Self:
+        """
+        Clips the point cloud by a given radius around a specified center.
+
+        Args:
+            radius (float): The radius of the clipping area.
+
+        Returns:
+            Self: The modified instance of the pipeline.
+        """
+        record = self.city_df[
+            self.city_df["name"].str.lower() == self.city_name.lower()
+        ]
+        polygon = record.iloc[0].geometry
+        crs = self.city_df.crs
+        if crs is not None:
+            polygon = tranform_polygon(polygon, crs, "EPSG:28992")
+        center = polygon.centroid.coords[0]  # type: ignore
+        bbox = [
+            center[0] - radius,
+            center[1] - radius,
+            center[0] + radius,
+            center[1] + radius,
+        ]
+
+        return self._clip_bbox(bbox)
+
+    def info(self) -> Self:
+        """
+        Print the pipeline configuration.
+
+        Returns:
+            None
+        """
+        info_pipe = [
+            {
+                "type": "filters.info",
+            }
+        ]
+        # append info_pipe to pipeline_setting as -2 index. This is because the last index is the writer
+        self.pipeline_setting = (
+            self.pipeline_setting[:1] + info_pipe + self.pipeline_setting[1:]
+        )
+        return self
+
     def execute(self) -> None:
         """
         Execute the pipeline.
@@ -221,27 +271,31 @@ class PntCPipeline:
             None
         """
         print("Executing pipeline...")
+        self.info()
         pipeline_json = json.dumps(self.pipeline_setting)
-        print("Pipeline JSON:", pipeline_json)
+        print(pipeline_json)
         pipeline = pdal.Pipeline(pipeline_json)
-        pipeline.execute()
+        count = pipeline.execute()
+        metadata = pipeline.metadata
+        log = pipeline.log
+        print(log)
+        print("metadata: ", metadata)
 
         print("Pipeline executed successfully")
 
-    def _city_polygon(self, city_name: str) -> Polygon:
+    def _city_polygon(self) -> Polygon:
         """
         Retrieves the polygon for a given city name.
 
         Args:
-            city_name (str): The name of the city.
-
+            None
         Returns:
             str: The well-known text (WKT) representation of the city's polygon.
         Raises:
             ValueError: If the polygon fails to be reprojected.
         """
         record = self.city_df[
-            self.city_df["name"].str.lower() == city_name.lower()
+            self.city_df["name"].str.lower() == self.city_name.lower()
         ]
         polygon = record.iloc[0].geometry
         crs = self.city_df.crs
@@ -276,3 +330,31 @@ class PntCPipeline:
             raise ValueError("Failed to reproject polygon")
         wkt_polygon = polygon.wkt
         return wkt_polygon
+
+    def _clip_bbox(self, bbox: list[float]) -> Self:
+        """
+        Clip the point cloud by a bounding box.
+
+        Args:
+            bbox (list[float]): The bounding box to clip the point cloud. [xmin, ymin, xmax, ymax]
+
+        Returns:
+            Self: The updated pipeline object.
+
+        """
+        print("bbox- ", bbox)
+        clip_pipe = [
+            {
+                "type": "filters.crop",
+                "bounds": f"([{bbox[0]},{bbox[2]} ],[{bbox[1]},{bbox[3]}])",
+            }
+        ]
+        print("pipeline_setting- ", clip_pipe)
+
+        # append clip_pipe to pipeline_setting as -2 index. This is because the last index is the writer
+        self.pipeline_setting = (
+            self.pipeline_setting[:-1]
+            + clip_pipe
+            + self.pipeline_setting[-1:]
+        )
+        return self

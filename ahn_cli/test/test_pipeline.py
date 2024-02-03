@@ -19,7 +19,9 @@ class TestPipeline(unittest.TestCase):
             self.assertTrue(tmp.name)
             self.assertTrue(os.path.exists(TEST_DATA0))
 
-            pipeline = PntCPipeline(TEST_DATA0, tmp.name, CITY_FILE_PATH)
+            pipeline = PntCPipeline(
+                TEST_DATA0, tmp.name, CITY_FILE_PATH, "Westervoort"
+            )
             pipeline.execute()
 
             with laspy.open(TEST_DATA0) as las:
@@ -30,7 +32,9 @@ class TestPipeline(unittest.TestCase):
 
     def test_decimate(self) -> None:
         with tempfile.NamedTemporaryFile(suffix=".las", delete=True) as tmp:
-            pipeline = PntCPipeline(TEST_DATA0, tmp.name, CITY_FILE_PATH)
+            pipeline = PntCPipeline(
+                TEST_DATA0, tmp.name, CITY_FILE_PATH, "Westervoort"
+            )
             pipeline.decimate(10)
             pipeline.execute()
 
@@ -42,7 +46,9 @@ class TestPipeline(unittest.TestCase):
 
     def test_include(self) -> None:
         with tempfile.NamedTemporaryFile(suffix=".las", delete=True) as tmp:
-            pipeline = PntCPipeline(TEST_DATA0, tmp.name, CITY_FILE_PATH)
+            pipeline = PntCPipeline(
+                TEST_DATA0, tmp.name, CITY_FILE_PATH, "Westervoort"
+            )
             pipeline.include([2, 6])
             pipeline.execute()
 
@@ -68,7 +74,9 @@ class TestPipeline(unittest.TestCase):
 
     def test_exclude(self) -> None:
         with tempfile.NamedTemporaryFile(suffix=".las", delete=True) as tmp:
-            pipeline = PntCPipeline(TEST_DATA0, tmp.name, CITY_FILE_PATH)
+            pipeline = PntCPipeline(
+                TEST_DATA0, tmp.name, CITY_FILE_PATH, "Westervoort"
+            )
             pipeline.exclude([2, 6])
             pipeline.execute()
 
@@ -85,7 +93,9 @@ class TestPipeline(unittest.TestCase):
 
     def test_merge(self) -> None:
         with tempfile.NamedTemporaryFile(suffix=".las", delete=True) as tmp:
-            pipeline = PntCPipeline(TEST_DATA0, tmp.name, CITY_FILE_PATH)
+            pipeline = PntCPipeline(
+                TEST_DATA0, tmp.name, CITY_FILE_PATH, "Westervoort"
+            )
             pipeline.merge([TEST_DATA1])
             pipeline.execute()
 
@@ -97,8 +107,10 @@ class TestPipeline(unittest.TestCase):
 
     def test_clip(self) -> None:
         with tempfile.NamedTemporaryFile(suffix=".las", delete=True) as tmp:
-            pipeline = PntCPipeline(TEST_DATA0, tmp.name, CITY_FILE_PATH)
-            pipeline.clip("Westervoort")
+            pipeline = PntCPipeline(
+                TEST_DATA0, tmp.name, CITY_FILE_PATH, "Westervoort"
+            )
+            pipeline.clip()
             pipeline.execute()
 
             with laspy.open(TEST_DATA0) as las:
@@ -109,8 +121,24 @@ class TestPipeline(unittest.TestCase):
 
     def test_clip_by_arbitrary_polygon(self) -> None:
         with tempfile.NamedTemporaryFile(suffix=".las", delete=True) as tmp:
-            pipeline = PntCPipeline(TEST_DATA0, tmp.name, CITY_FILE_PATH)
+            pipeline = PntCPipeline(
+                TEST_DATA0, tmp.name, CITY_FILE_PATH, "Westervoort"
+            )
             pipeline.clip_by_arbitrary_polygon(WESTERVOORT_FILE_PATH)
+            pipeline.execute()
+
+            with laspy.open(TEST_DATA0) as las:
+                points_before = las.header.point_count
+                las = laspy.read(tmp.name)
+                points_after = las.header.point_count
+                self.assertTrue(points_after < points_before)
+
+    def test_clip_by_radius(self) -> None:
+        with tempfile.NamedTemporaryFile(suffix=".las", delete=True) as tmp:
+            pipeline = PntCPipeline(
+                TEST_DATA0, tmp.name, CITY_FILE_PATH, "Westervoort"
+            )
+            pipeline.clip_by_radius(1000)
             pipeline.execute()
 
             with laspy.open(TEST_DATA0) as las:

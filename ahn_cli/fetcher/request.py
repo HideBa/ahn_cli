@@ -28,7 +28,7 @@ class Fetcher:
             print(f"Fetching tile {nth + 1}/{len(self.urls)}")
             res = requests.get(url, stream=True)
             with tempfile.NamedTemporaryFile(
-                delete=False, mode="w+b", suffix=".tmp"
+                delete=False, mode="w+b", suffix=".laz"
             ) as temp_file:
                 for chunk in res.iter_content(chunk_size=1024 * 1024):
                     temp_file.write(chunk)

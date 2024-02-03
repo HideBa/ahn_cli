@@ -48,7 +48,9 @@ def validate_include_exclude(
         return
     for c in include_classes:
         if c in exclude_classes:
-            raise ValueError(f"Class {c} is in both include and exclude classes.")
+            raise ValueError(
+                f"Class {c} is in both include and exclude classes."
+            )
 
 
 def validate_clip_file(clip_file: str | None) -> str | None:
@@ -67,6 +69,14 @@ def validate_decimate(decimate: int | None) -> int | None:
     return decimate
 
 
+def validate_radius(radius: int | None) -> int | None:
+    if radius is None:
+        return None
+    if radius < 1:
+        raise ValueError("Radius must be greater than 0.")
+    return radius
+
+
 def validate_all(
     output_path: str,
     city_name: str,
@@ -75,12 +85,16 @@ def validate_all(
     no_clip_city: bool = False,
     clip_file: str | None = None,
     decimate: int | None = None,
+    radius: int | None = None,
 ) -> bool:
     validate_output(output_path)
-    validate_city(city_name, "./ahn_cli/fetcher/data/municipality_simple.geojson")
+    validate_city(
+        city_name, "./ahn_cli/fetcher/data/municipality_simple.geojson"
+    )
     validate_include_classes(include_classes)
     validate_exclude_classes(exclude_classes)
     validate_include_exclude(include_classes, exclude_classes)
     validate_clip_file(clip_file)
     validate_decimate(decimate)
+    validate_radius(radius)
     return True

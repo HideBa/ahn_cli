@@ -17,6 +17,7 @@ Options:
  -ncc --no-clip-city           Do not clip the point cloud data to the city boundary.
  -cf, --clip-file <file>       Specify a file path to a clipping boundary file. The tool will
                                use this file to clip the point cloud data to a specific area.
+ -r, --radius <radius>         Set the radius of the bbox to clip the point cloud data to. Unit is in meter.
  -p, --preview                 Preview the point cloud data in a 3D viewer.
  -h, --help [category]         Display help information. Optionally, specify a category to get
                                more detailed help for a specific command.
@@ -42,14 +43,14 @@ Options:
     "--include-class",
     "include_class",
     type=str,
-    help="Include specific point cloud classes in the download. Classes should be specified in a comma-separated list.",
+    help="Include specific point cloud classes in the download. Classes should be specified in a comma-separated list. Here is a list of available classes. 0:Created,never classifed 1:Unclassified 2:Ground 6:Building 9:Water 14:High tension 26:Civil structure",
 )
 @click.option(
     "-e",
     "--exclude-class",
     "exclude_class",
     type=str,
-    help="Exclude specific point cloud classes from the download. Classes should be specified in a comma-separated list.",
+    help="Exclude specific point cloud classes from the download. Classes should be specified in a comma-separated list.Here is a list of available classes. 0:Created,never classifed 1:Unclassified 2:Ground 6:Building 9:Water 14:High tension 26:Civil structure",
 )
 @click.option(
     "-ncc",
@@ -71,6 +72,12 @@ Options:
     help="Decimate the point cloud by a given step.",
 )
 @click.option(
+    "-r",
+    "--radius",
+    type=int,
+    help="Set the radius of the bbox to clip the point cloud data to. Unit is in meter.",
+)
+@click.option(
     "-p",
     "--preview",
     is_flag=True,
@@ -80,6 +87,7 @@ Options:
     "-h",
     "--help",
     help="Display help information. Optionally, specify a category to get more detailed help for a specific command.",
+    multiple=True,  # Allow multiple lines for help information.
 )
 @click.option(
     "-v", "--version", help="Display the version number of the tool and exit."
@@ -103,6 +111,7 @@ def main(**kwargs: Dict[str, Union[str, int, bool, None]]) -> None:
     no_clip_city = kwargs.get("no_clip_city")
     clip_file = kwargs.get("clip_file")
     decimate = kwargs.get("decimate")
+    radius = kwargs.get("radius")
     preview = kwargs.get("preview")
     if validate_all(
         output,
@@ -112,6 +121,7 @@ def main(**kwargs: Dict[str, Union[str, int, bool, None]]) -> None:
         no_clip_city,
         clip_file,
         decimate,
+        radius,
     ):
         process(
             cfg.geotiles_base_url,
@@ -122,6 +132,7 @@ def main(**kwargs: Dict[str, Union[str, int, bool, None]]) -> None:
             exclude_classes,
             no_clip_city,
             clip_file,
+            radius,
             preview,
         )
 
