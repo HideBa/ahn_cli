@@ -1,11 +1,14 @@
 [tool.poetry]
-name = "point-cloud-collector"
+name = "ahn_cli"
 version = "0.1.0"
 description = ""
 authors = ["HideBa <baba.papa1120.ba@gmail.com>"]
 readme = "README.md"
-packages = [{ include = "ahn_cli", from = "ahn_cli" }]
+packages = [{ include = "ahn_cli", from = "./" }]
 include = ["ahn_cli/*", "ahn_cli/**/*"]
+
+[tool.poetry.scripts]
+ahn_cli = "main.py"
 
 [tool.poetry.dependencies]
 python = ">=3.9, <3.12"
