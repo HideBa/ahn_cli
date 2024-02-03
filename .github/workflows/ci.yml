@@ -24,6 +24,11 @@ jobs:
         with:
           python-version: 3.11.1
 
+      - name: Install PDAL
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pdal
+
       - name: Cache pip packages
         uses: actions/cache@v2
         with:
@@ -58,8 +63,8 @@ jobs:
 
       - name: Commit exported requirements
         run: |
-          git config --global user.name "${{ secrets.GITHUB_USER_NAME }}"
-          git config --global user.email "${{ secrets.GITHUB_USER_EMAIL }}"
+          git config --global user.name "${{ secrets.GH_USER_NAME }}"
+          git config --global user.email "${{ secrets.GH_USER_EMAIL }}"
           git add requirements.txt requirements.dev.txt
           git commit -m "Update requirements"
           git push origin main
