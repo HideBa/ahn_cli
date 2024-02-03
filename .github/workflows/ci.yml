@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - "requirements.txt"
+      - "requirements.dev.txt"
   pull_request:
     branches:
       - main
@@ -19,7 +22,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.x
+          python-version: 3.11.1
 
       - name: Cache pip packages
         uses: actions/cache@v2
@@ -47,3 +50,16 @@ jobs:
 
       - name: Testing
         run: pytest ./ahn_cli/**/*.py --cov=./ahn_cli
+
+      - name: Export requirements
+        run: |
+          poetry export --dev --format requirements.txt --output requirements.txt
+          poetry export --dev --format requirements.txt --output requirements.dev.txt
+
+      - name: Commit exported requirements
+        run: |
+          git config --global user.name "${{ secrets.GITHUB_USER_NAME }}"
+          git config --global user.email "${{ secrets.GITHUB_USER_EMAIL }}"
+          git add requirements.txt requirements.dev.txt
+          git commit -m "Update requirements"
+          git push origin main
