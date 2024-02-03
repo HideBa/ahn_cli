@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ci:
+    if: ${{ github.repository == 'HideBa/ahn_cli' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - name: Cache pip packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Linting
+        run: |
+          pip install pylint
+          pylint ./ahn_cli/**/*.py
+
+      - name: Type checking
+        run: |
+          pip install mypy
+          mypy ./ahn_cli/**/*.py
+
+      - name: Testing
+        run: pytest ./ahn_cli/**/*.py --cov=./ahn_cli
