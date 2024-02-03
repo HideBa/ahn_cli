@@ -235,15 +235,22 @@ class PntCPipeline:
         crs = self.city_df.crs
         if crs is not None:
             polygon = tranform_polygon(polygon, crs, "EPSG:28992")
-        center = polygon.centroid.coords[0]  # type: ignore
-        bbox = [
-            center[0] - radius,
-            center[1] - radius,
-            center[0] + radius,
-            center[1] + radius,
+        center = polygon.centroid.coords[0]
+        clip_pipe = [
+            {
+                "type": "filters.crop",
+                "point": f"POINT({center[0]} {center[1]} 0)",
+                "distance": str(radius),
+            }
         ]
 
-        return self._clip_bbox(bbox)
+        # append clip_pipe to pipeline_setting as -2 index. This is because the last index is the writer
+        self.pipeline_setting = (
+            self.pipeline_setting[:-1]
+            + clip_pipe
+            + self.pipeline_setting[-1:]
+        )
+        return self
 
     def info(self) -> Self:
         """
@@ -273,13 +280,10 @@ class PntCPipeline:
         print("Executing pipeline...")
         self.info()
         pipeline_json = json.dumps(self.pipeline_setting)
-        print(pipeline_json)
         pipeline = pdal.Pipeline(pipeline_json)
-        count = pipeline.execute()
-        metadata = pipeline.metadata
+        pipeline.execute()
         log = pipeline.log
         print(log)
-        print("metadata: ", metadata)
 
         print("Pipeline executed successfully")
 
@@ -342,14 +346,12 @@ class PntCPipeline:
             Self: The updated pipeline object.
 
         """
-        print("bbox- ", bbox)
         clip_pipe = [
             {
                 "type": "filters.crop",
                 "bounds": f"([{bbox[0]},{bbox[2]} ],[{bbox[1]},{bbox[3]}])",
             }
         ]
-        print("pipeline_setting- ", clip_pipe)
 
         # append clip_pipe to pipeline_setting as -2 index. This is because the last index is the writer
         self.pipeline_setting = (

@@ -1,7 +1,7 @@
-from setuptools import setup, find_packages
+# from setuptools import setup, find_packages
 
-setup(
-    name="ahn_cli",
-    version="0.1",
-    packages=find_packages(),
-)
+# setup(
+#     name="ahn_cli",
+#     version="0.1",
+#     packages=find_packages(),
+# )

@@ -82,7 +82,7 @@ def validate_all(
     city_name: str,
     include_classes: list[int] | None = None,
     exclude_classes: list[int] | None = None,
-    no_clip_city: bool = False,
+    no_clip_city: bool | None = False,
     clip_file: str | None = None,
     decimate: int | None = None,
     radius: int | None = None,

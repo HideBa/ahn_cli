@@ -1,5 +1,5 @@
-from typing import Dict, Union
 import click
+from ahn_cli.kwargs import CLIArgs
 from ahn_cli.validator import validate_all
 from ahn_cli.process import process
 from ahn_cli import config
@@ -17,7 +17,7 @@ Options:
  -ncc --no-clip-city           Do not clip the point cloud data to the city boundary.
  -cf, --clip-file <file>       Specify a file path to a clipping boundary file. The tool will
                                use this file to clip the point cloud data to a specific area.
- -r, --radius <radius>         Set the radius of the bbox to clip the point cloud data to. Unit is in meter.
+ -r, --radius <radius>         Set the radius of the circle to clip the point cloud data to. Unit is in meter.
  -p, --preview                 Preview the point cloud data in a 3D viewer.
  -h, --help [category]         Display help information. Optionally, specify a category to get
                                more detailed help for a specific command.
@@ -75,7 +75,7 @@ Options:
     "-r",
     "--radius",
     type=int,
-    help="Set the radius of the bbox to clip the point cloud data to. Unit is in meter.",
+    help="Set the radius of the circle to clip the point cloud data to. Unit is in meter.",
 )
 @click.option(
     "-p",
@@ -93,7 +93,7 @@ Options:
     "-v", "--version", help="Display the version number of the tool and exit."
 )
 @click.option("-verbose", help="Display verbose output.")
-def main(**kwargs: Dict[str, Union[str, int, bool, None]]) -> None:
+def main(kwargs: CLIArgs) -> None:
     cfg = config.Config()
 
     output = kwargs.get("output", "")
