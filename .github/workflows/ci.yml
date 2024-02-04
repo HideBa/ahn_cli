@@ -27,13 +27,13 @@ jobs:
       - name: Install PDAL
         run: |
           sudo apt-get update
-          sudo apt-get install -y pdal
+          sudo apt-get install -y pdal libpdal -dev
 
       - name: Cache pip packages
         uses: actions/cache@v2
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
 
       - name: Install Poetry
         run: |
