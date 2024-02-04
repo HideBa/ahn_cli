@@ -27,7 +27,6 @@ jobs:
       - name: Install PDAL
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgdal-dev pdal=2.6.2 libpdal-dev
           sudo apt-get install -y libgdal-dev pdal libpdal-dev
       - name: Check pdal
         run: |
@@ -46,31 +45,31 @@ jobs:
 
       - name: Configure Poetry
         run: |
-          poetry config virtualenvs.create true
-          poetry config virtualenvs.in-project true
+          poetry config virtualenvs.create false
 
-      - name: Install dependencies excluding PDAL
+      - name: Install dependencies
         run: |
-          poetry add pdal --optional
-          poetry install --no-root
+          poetry install
+      # - name: Install dependencies excluding PDAL
+      #   run: |
+      #     poetry add pdal --optional
+      #     poetry install --no-root
 
-      - name: Install PDAL Python package
-        run: |
-          source .venv/bin/activate
-          pip install pdal==3.2.3
+      # - name: Install PDAL Python package
+      #   run: |
+      #     source .venv/bin/activate
+      #     pip install pdal==3.2.3
 
       - name: Linting
         run: |
-          pip install pylint
-          pylint ./ahn_cli/**/*.py
+          poetry run pylint ./ahn_cli/**/*.py
 
       - name: Type checking
         run: |
-          pip install mypy
-          mypy ./ahn_cli/**/*.py
+          poetry run mypy ./ahn_cli/**/*.py
 
       - name: Testing
-        run: pytest ./ahn_cli/**/*.py --cov=./ahn_cli
+        run: poetry run pytest ./ahn_cli/**/*.py --cov=./ahn_cli
 
       - name: Export requirements
         run: |
