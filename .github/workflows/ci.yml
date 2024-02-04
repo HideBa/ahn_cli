@@ -27,7 +27,41 @@ jobs:
       - name: Install PDAL
         run: |
           sudo apt-get update
-            sudo apt-get install -y libgdal-dev pdal=2.4.0 libpdal-dev
+          sudo apt-get install -y \
+          g++ \
+          cmake \
+          git \
+          libgdal-dev \
+          libgeotiff-dev \
+          liblaszip-dev \
+          libboost-all-dev \
+          libboost-program-options-dev \
+          libboost-filesystem-dev \
+          libboost-system-dev \
+          libsqlite3-dev \
+          sqlite3 \
+          libproj-dev \
+          libcurl4-openssl-dev \
+          libjsoncpp-dev \
+          libxml2-dev \
+          libflann-dev \
+          libpcl-dev \
+          libeigen3-dev \
+          libnitro-dev \
+          libqhull-dev \
+          libtbb-dev
+      - name: Clone PDAL
+        run: |
+          git clone https://github.com/PDAL/PDAL.git
+          cd PDAL
+          git checkout 2.5-maintenance
+          mkdir build
+          cd build
+          cmake ..
+          make
+          sudo make install
+          sudo ldconfig
+          pdal --version
       - name: Check pdal
         run: |
           echo "PDAL version -------------"
