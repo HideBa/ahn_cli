@@ -28,6 +28,7 @@ Options:
 
 
 @click.command()
+@click.version_option(version="0.1.4", prog_name="ahn_cli")
 @click.option(
     "-o",
     "--output",
@@ -85,16 +86,6 @@ Options:
     is_flag=True,
     help="Preview the point cloud data in a 3D viewer.",
 )
-@click.option(
-    "-h",
-    "--help",
-    help="Display help information. Optionally, specify a category to get more detailed help for a specific command.",
-    multiple=True,  # Allow multiple lines for help information.
-)
-@click.option(
-    "-v", "--version", help="Display the version number of the tool and exit."
-)
-@click.option("-verbose", help="Display verbose output.")
 def main(**kwargs: Any) -> None:
     cfg = config.Config()
     params = cast(CLIArgs, kwargs)

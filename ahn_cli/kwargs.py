@@ -11,5 +11,3 @@ class CLIArgs(TypedDict):
     decimate: int | None
     radius: int | None
     preview: bool
-    help: str | None
-    version: str | None
