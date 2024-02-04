@@ -1,22 +1,25 @@
 [tool.poetry]
 name = "ahn_cli"
-version = "0.1.1"
+version = "0.1.3"
 description = ""
 authors = ["HideBa <baba.papa1120.ba@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 packages = [{ include = "ahn_cli", from = "./" }]
-include = ["ahn_cli/**/*", "README.md", "pyproject.toml", "LICENSE"]
-exclude = ["ahn_cli/test/*"]
+include = [
+  "ahn_cli/**/*.py",
+  "ahn_cli/**/*.geojson",
+  "README.md",
+  "pyproject.toml",
+  "LICENSE",
+]
 
 [tool.poetry.scripts]
 ahn_cli = "ahn_cli.main:main"
 
 [tool.poetry.dependencies]
 python = ">=3.9, <3.12"
-flask = "^3.0.0"
 click = "^8.1.7"
-numpy = "^1.26.2"
 pdal = "^3.2.3"
 geopandas = "^0.14.1"
 shapely = "^2.0.2"

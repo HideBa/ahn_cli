@@ -6,10 +6,10 @@ import laspy
 
 from ahn_cli.manipulator.pipeline import PntCPipeline
 
-TEST_DATA0 = "./ahn_cli/test/testdata/westervoort0_thinned.las"
-TEST_DATA1 = "./ahn_cli/test/testdata/westervoort1_thinned.las"
+TEST_DATA0 = "./tests/testdata/westervoort0_thinned.las"
+TEST_DATA1 = "./tests/testdata/westervoort1_thinned.las"
 CITY_FILE_PATH = "./ahn_cli/fetcher/data/municipality_simple.geojson"
-WESTERVOORT_FILE_PATH = "./ahn_cli/test/testdata/westervoort.geojson"
+WESTERVOORT_FILE_PATH = "./tests/testdata/westervoort.geojson"
 
 
 class TestPipeline(unittest.TestCase):
