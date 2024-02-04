@@ -1,12 +1,13 @@
 [tool.poetry]
 name = "ahn_cli"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["HideBa <baba.papa1120.ba@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 packages = [{ include = "ahn_cli", from = "./" }]
-include = ["ahn_cli/*", "ahn_cli/**/*"]
+include = ["ahn_cli/**/*", "README.md", "pyproject.toml", "LICENSE"]
+exclude = ["ahn_cli/test/*"]
 
 [tool.poetry.scripts]
 ahn_cli = "ahn_cli.main:main"

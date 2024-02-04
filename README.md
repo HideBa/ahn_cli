@@ -1,7 +1,7 @@
 # AHN CLI
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-green.svg)](https://github.com/HideBa/ahn-cli/releases/tag/v0.1.0)
+[![Version: 1.0.0](https://img.shields.io/badge/Version-0.1.0-green.svg)](https://github.com/HideBa/ahn-cli/releases/tag/v0.1.0)
 [![CICD Status: Passing](https://img.shields.io/badge/CICD-Passing-brightgreen.svg)](https://github.com/HideBa/ahn-cli/actions)
 
 ## Description
