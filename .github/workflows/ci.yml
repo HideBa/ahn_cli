@@ -27,7 +27,7 @@ jobs:
       - name: Install PDAL
         run: |
           sudo apt-get update
-          sudo apt-get install -y pdal libpdal-dev
+          sudo apt-get install -y pdal dal-dev py-pdal
 
       - name: Cache pip packages
         uses: actions/cache@v2
