@@ -3,6 +3,7 @@ name = "ahn_cli"
 version = "0.1.0"
 description = ""
 authors = ["HideBa <baba.papa1120.ba@gmail.com>"]
+license = "MIT"
 readme = "README.md"
 packages = [{ include = "ahn_cli", from = "./" }]
 include = ["ahn_cli/*", "ahn_cli/**/*"]
