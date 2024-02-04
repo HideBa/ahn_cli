@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from importlib.resources import files
 
 
 @dataclass
@@ -7,4 +8,6 @@ class Config:
     # ahn_base_url = (
     #     "https://ns_hwh.fundaments.nl/hwh-ahn/ahn4/03a_DSM_0.5m/{tile_index}.zip"
     # )
-    city_polygon_file = "./ahn_cli/fetcher/data/municipality_simple.geojson"
+    city_polygon_file = files("ahn_cli.fetcher.data").joinpath(
+        "municipality_simple.geojson"
+    )
