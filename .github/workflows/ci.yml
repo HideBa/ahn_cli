@@ -27,7 +27,7 @@ jobs:
       - name: Install PDAL
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgdal-dev pdal libpdal-dev
+            sudo apt-get install -y libgdal-dev pdal=2.4.0 libpdal-dev
       - name: Check pdal
         run: |
           echo "PDAL version -------------"
