@@ -28,6 +28,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libgdal-dev pdal libpdal-dev
+      - name: Check pdal
+        run: |
+          echo "PDAL version -------------"
+          pdal --version
 
       - name: Cache pip packages
         uses: actions/cache@v2
