@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ahn_cli"
-version = "0.1.4"
+version = "0.1.5"
 description = ""
 authors = ["HideBa <baba.papa1120.ba@gmail.com>"]
 license = "MIT"
