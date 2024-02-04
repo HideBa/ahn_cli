@@ -39,9 +39,20 @@ jobs:
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
 
-      - name: Install dependencies with Poetry
+      - name: Configure Poetry
         run: |
-          poetry install
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
+
+      - name: Install dependencies excluding PDAL
+        run: |
+          poetry add pdal --optional
+          poetry install --no-root
+
+      - name: Install PDAL Python package
+        run: |
+          source .venv/bin/activate
+          pip install pdal==3.2.3
 
       - name: Linting
         run: |
