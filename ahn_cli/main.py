@@ -1,4 +1,6 @@
+from typing import cast
 import click
+from pyparsing import Any
 from ahn_cli.kwargs import CLIArgs
 from ahn_cli.validator import validate_all
 from ahn_cli.process import process
@@ -93,27 +95,28 @@ Options:
     "-v", "--version", help="Display the version number of the tool and exit."
 )
 @click.option("-verbose", help="Display verbose output.")
-def main(kwargs: CLIArgs) -> None:
+def main(**kwargs: Any) -> None:
     cfg = config.Config()
-
-    output = kwargs.get("output", "")
-    city = kwargs.get("city", "")
+    params = cast(CLIArgs, kwargs)
+    output = params.get("output", "")
+    city = params.get("city", "")
     include_classes = (
-        [int(x) for x in str(kwargs.get("include_class", "")).split(",") if x]
-        if kwargs.get("include_class", "")
+        [int(x) for x in str(params.get("include_class", "")).split(",") if x]
+        if params.get("include_class", "")
         else None
     )
     exclude_classes = (
-        [int(x) for x in str(kwargs.get("exclude_class", "")).split(",") if x]
-        if kwargs.get("exclude_class", "")
+        [int(x) for x in str(params.get("exclude_class", "")).split(",") if x]
+        if params.get("exclude_class", "")
         else None
     )
-    no_clip_city = kwargs.get("no_clip_city")
-    clip_file = kwargs.get("clip_file")
-    decimate = kwargs.get("decimate")
-    radius = kwargs.get("radius")
-    preview = kwargs.get("preview")
+    no_clip_city = params.get("no_clip_city")
+    clip_file = params.get("clip_file")
+    decimate = params.get("decimate")
+    radius = params.get("radius")
+    preview = params.get("preview")
     if validate_all(
+        cfg,
         output,
         city,
         include_classes,

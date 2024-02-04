@@ -31,5 +31,6 @@ test:
 .PHONY: check
 check: lint type test	format sort
 
-run-app:
-	poetry run python $(PACKAGE_DIR)/main.py
+.PHONY: run
+run:
+	poetry run ahn_cli $(ARGS)

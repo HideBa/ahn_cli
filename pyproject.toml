@@ -9,7 +9,7 @@ packages = [{ include = "ahn_cli", from = "./" }]
 include = ["ahn_cli/*", "ahn_cli/**/*"]
 
 [tool.poetry.scripts]
-ahn_cli = "main.py"
+ahn_cli = "ahn_cli.main:main"
 
 [tool.poetry.dependencies]
 python = ">=3.9, <3.12"

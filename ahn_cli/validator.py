@@ -1,6 +1,8 @@
 import os
 import geopandas as gpd
 
+from ahn_cli import config
+
 AHN_CLASSES = [0, 1, 2, 6, 7, 4, 6]
 
 
@@ -78,6 +80,7 @@ def validate_radius(radius: int | None) -> int | None:
 
 
 def validate_all(
+    cfg: config.Config,
     output_path: str,
     city_name: str,
     include_classes: list[int] | None = None,
@@ -88,9 +91,7 @@ def validate_all(
     radius: int | None = None,
 ) -> bool:
     validate_output(output_path)
-    validate_city(
-        city_name, "./ahn_cli/fetcher/data/municipality_simple.geojson"
-    )
+    validate_city(city_name, cfg.city_polygon_file)
     validate_include_classes(include_classes)
     validate_exclude_classes(exclude_classes)
     validate_include_exclude(include_classes, exclude_classes)
