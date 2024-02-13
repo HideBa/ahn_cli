@@ -133,6 +133,22 @@ class TestPipeline(unittest.TestCase):
                 points_after = las.header.point_count
                 self.assertTrue(points_after < points_before)
 
+    def test_clip_by_bbox(self) -> None:
+        with tempfile.NamedTemporaryFile(suffix=".las", delete=True) as tmp:
+            pipeline = PntCPipeline(
+                TEST_DATA0, tmp.name, CITY_FILE_PATH, "Westervoort"
+            )
+            pipeline.clip_by_bbox(
+                [194198.302994, 443461.343994, 194594.109009, 443694.838989]
+            ).execute()
+            self.assertTrue(True)
+
+            with laspy.open(TEST_DATA0) as las:
+                points_before = las.header.point_count
+                las = laspy.read(tmp.name)
+                points_after = las.header.point_count
+                self.assertTrue(points_after < points_before)
+
     def test_clip_by_radius(self) -> None:
         with tempfile.NamedTemporaryFile(suffix=".las", delete=True) as tmp:
             pipeline = PntCPipeline(

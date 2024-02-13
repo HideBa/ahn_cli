@@ -71,6 +71,16 @@ def validate_decimate(decimate: int | None) -> int | None:
     return decimate
 
 
+def validate_bbox(bbox: list[float] | None) -> list[float] | None:
+    if bbox is None:
+        return None
+    if len(bbox) != 4:
+        raise ValueError("Bounding box must have 4 coordinates.")
+    if bbox[0] >= bbox[2] or bbox[1] >= bbox[3]:
+        raise ValueError("Bounding box coordinates are not valid.")
+    return bbox
+
+
 def validate_radius(radius: int | None) -> int | None:
     if radius is None:
         return None
@@ -88,6 +98,7 @@ def validate_all(
     no_clip_city: bool | None = False,
     clip_file: str | None = None,
     decimate: int | None = None,
+    bbox: list[float] | None = None,
     radius: int | None = None,
 ) -> bool:
     validate_output(output_path)
@@ -97,5 +108,6 @@ def validate_all(
     validate_include_exclude(include_classes, exclude_classes)
     validate_clip_file(clip_file)
     validate_decimate(decimate)
+    validate_bbox(bbox)
     validate_radius(radius)
     return True

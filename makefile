@@ -26,7 +26,7 @@ sort:
 
 .PHONY: test
 test:
-	poetry run pytest ./**/*.py
+	poetry run pytest
 
 .PHONY: check
 check: lint type test	format sort

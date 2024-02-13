@@ -13,6 +13,7 @@ def process(
     exclude_classes: list[int] | None = None,
     no_clip_city: bool | None = False,
     clip_file: str | None = None,
+    bbox: list[float] | None = None,
     radius: int | None = None,
     preview: bool | None = False,
 ) -> None:
@@ -25,6 +26,8 @@ def process(
         files[0], output_path, city_polygon_path, city_name
     )
     pipeline.merge(files[1:])
+    if bbox is not None:
+        pipeline.clip_by_bbox(bbox)
     if radius is not None:
         pipeline.clip_by_radius(radius)
     if include_classes is not None and len(include_classes) > 0:

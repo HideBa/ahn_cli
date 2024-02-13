@@ -218,6 +218,32 @@ class PntCPipeline:
         )
         return self
 
+    def clip_by_bbox(self, bbox: list[float]) -> Self:
+        """
+        Clips the point cloud by a bounding box.
+
+        Args:
+            bbox (list[float]): The bounding box to clip the point cloud. [xmin, ymin, xmax, ymax]
+
+        Returns:
+            Self: The updated pipeline object.
+
+        """
+        clip_pipe = [
+            {
+                "type": "filters.crop",
+                "bounds": f"([{bbox[0]},{bbox[2]} ],[{bbox[1]},{bbox[3]}])",
+            }
+        ]
+
+        # append clip_pipe to pipeline_setting as -2 index. This is because the last index is the writer
+        self.pipeline_setting = (
+            self.pipeline_setting[:-1]
+            + clip_pipe
+            + self.pipeline_setting[-1:]
+        )
+        return self
+
     def clip_by_radius(self, radius: float) -> Self:
         """
         Clips the point cloud by a given radius around a specified center.

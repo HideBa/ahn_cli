@@ -19,6 +19,7 @@ Options:
  -ncc --no-clip-city           Do not clip the point cloud data to the city boundary.
  -cf, --clip-file <file>       Specify a file path to a clipping boundary file. The tool will
                                use this file to clip the point cloud data to a specific area.
+ -b, --bbox <bbox>             Specify a bounding box to clip the point cloud data. It should be comma-separated list with minx,miny,maxx,maxy
  -r, --radius <radius>         Set the radius of the circle to clip the point cloud data to. Unit is in meter.
  -p, --preview                 Preview the point cloud data in a 3D viewer.
  -h, --help [category]         Display help information. Optionally, specify a category to get
@@ -75,6 +76,12 @@ Options:
     help="Decimate the point cloud by a given step.",
 )
 @click.option(
+    "-b",
+    "--bbox",
+    type=str,
+    help="Specify a bounding box to clip the point cloud data. It should be comma-separated list with minx,miny,maxx,maxy",
+)
+@click.option(
     "-r",
     "--radius",
     type=int,
@@ -104,6 +111,11 @@ def main(**kwargs: Any) -> None:
     no_clip_city = params.get("no_clip_city")
     clip_file = params.get("clip_file")
     decimate = params.get("decimate")
+    bbox = (
+        [float(x) for x in str(params.get("bbox", "")).split(",")]
+        if params.get("bbox", "")
+        else None
+    )
     radius = params.get("radius")
     preview = params.get("preview")
     if validate_all(
@@ -115,6 +127,7 @@ def main(**kwargs: Any) -> None:
         no_clip_city,
         clip_file,
         decimate,
+        bbox,
         radius,
     ):
         process(
@@ -126,6 +139,7 @@ def main(**kwargs: Any) -> None:
             exclude_classes,
             no_clip_city,
             clip_file,
+            bbox,
             radius,
             preview,
         )
