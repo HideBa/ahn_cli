@@ -8,6 +8,6 @@ def previewer(filepath: str) -> None:
     points = las.xyz
 
     ps.init()
-    _ps_cloud = ps.register_point_cloud("AHN Point Cloud", points)
+    ps.register_point_cloud("AHN Point Cloud", points)
 
     ps.show()
