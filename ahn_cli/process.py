@@ -24,20 +24,6 @@ def process(
 ) -> None:
     ahn_fetcher = Fetcher(base_url, city_name)
     fetched_files = ahn_fetcher.fetch()
-    # fetched_files = {
-    #     "https://geotiles.citg.tudelft.nl/AHN4_T/40BZ1_14.LAZ": "./testdata/3.LAZ",
-    #     "https://geotiles.citg.tudelft.nl/AHN4_T/40BZ1_20.LAZ": "./testdata/5.LAZ",
-    #     "https://geotiles.citg.tudelft.nl/AHN4_T/40BZ2_01.LAZ": "./testdata/6.LAZ",
-    #     "https://geotiles.citg.tudelft.nl/AHN4_T/40BZ1_15.LAZ": "./testdata/4.LAZ",
-    #     "https://geotiles.citg.tudelft.nl/AHN4_T/40BZ2_02.LAZ": "./testdata/7.LAZ",
-    #     "https://geotiles.citg.tudelft.nl/AHN4_T/40BZ2_03.LAZ": "./testdata/8.LAZ",
-    #     "https://geotiles.citg.tudelft.nl/AHN4_T/40BZ2_16.LAZ": "./testdata/13.LAZ",
-    #     "https://geotiles.citg.tudelft.nl/AHN4_T/40BZ2_17.LAZ": "./testdata/14.LAZ",
-    #     "https://geotiles.citg.tudelft.nl/AHN4_T/40BZ1_10.LAZ": "./testdata/2.LAZ",
-    #     "https://geotiles.citg.tudelft.nl/AHN4_T/40BZ2_06.LAZ": "./testdata/9.LAZ",
-    #     "https://geotiles.citg.tudelft.nl/AHN4_T/40BZ2_07.LAZ": "./testdata/10.LAZ",
-    #     "https://geotiles.citg.tudelft.nl/AHN4_T/40BZ2_11.LAZ": "./testdata/11.LAZ",
-    # }
 
     files = list(fetched_files.values())
     for i, file in enumerate(files):
