@@ -20,7 +20,6 @@ ahn_cli = "ahn_cli.main:main"
 [tool.poetry.dependencies]
 python = ">=3.9, <3.12"
 click = "^8.1.7"
-pdal = "^3.2.3"
 geopandas = "^0.14.1"
 shapely = "^2.0.2"
 laspy = {extras = ["lazrs"], version = "^2.5.3"}

@@ -1024,20 +1024,6 @@ files = [
 ]
 
 [[package]]
-name = "pdal"
-version = "3.2.3"
-description = "Point cloud data processing"
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "pdal-3.2.3.tar.gz", hash = "sha256:0bc2cb113f4df45b239dd54aedb8026478349db2daa5c98569994308d0563807"},
-]
-
-[package.dependencies]
-numpy = "*"
-
-[[package]]
 name = "pillow"
 version = "10.2.0"
 description = "Python Imaging Library (Fork)"
@@ -1654,4 +1640,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9, <3.12"
-content-hash = "2656664055db173dae9e59093c97651c79ec67cb388d79a41799528ab175e815"
+content-hash = "3e02d350ce90c3b3f1e143f321ef08dfa5446f74666af206ceae7ba49806f6d2"

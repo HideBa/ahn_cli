@@ -24,49 +24,6 @@ jobs:
         with:
           python-version: 3.11.1
 
-      - name: Install PDAL
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-          g++ \
-          cmake \
-          git \
-          libgdal-dev \
-          libgeotiff-dev \
-          liblaszip-dev \
-          libboost-all-dev \
-          libboost-program-options-dev \
-          libboost-filesystem-dev \
-          libboost-system-dev \
-          libsqlite3-dev \
-          sqlite3 \
-          libproj-dev \
-          libcurl4-openssl-dev \
-          libjsoncpp-dev \
-          libxml2-dev \
-          libflann-dev \
-          libpcl-dev \
-          libeigen3-dev \
-          libnitro-dev \
-          libqhull-dev \
-          libtbb-dev
-      - name: Clone PDAL
-        run: |
-          git clone https://github.com/PDAL/PDAL.git
-          cd PDAL
-          git checkout 2.5-maintenance
-          mkdir build
-          cd build
-          cmake ..
-          make
-          sudo make install
-          sudo ldconfig
-          pdal --version
-      - name: Check pdal
-        run: |
-          echo "PDAL version -------------"
-          pdal --version
-
       - name: Cache pip packages
         uses: actions/cache@v2
         with:
@@ -84,15 +41,6 @@ jobs:
       - name: Install dependencies
         run: |
           poetry install
-      # - name: Install dependencies excluding PDAL
-      #   run: |
-      #     poetry add pdal --optional
-      #     poetry install --no-root
-
-      # - name: Install PDAL Python package
-      #   run: |
-      #     source .venv/bin/activate
-      #     pip install pdal==3.2.3
 
       - name: Linting
         run: |
