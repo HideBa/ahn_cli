@@ -10,6 +10,7 @@ TEST_DATA0 = "./tests/testdata/westervoort0_thinned.las"
 TEST_DATA1 = "./tests/testdata/westervoort1_thinned.las"
 CITY_FILE_PATH = "./ahn_cli/fetcher/data/municipality_simple.geojson"
 WESTERVOORT_FILE_PATH = "./tests/testdata/westervoort.geojson"
+WESTERVOORT28992_FILE_PATH = "./tests/testdata/westervoort28992.geojson"
 
 
 class TestPipeline(unittest.TestCase):
@@ -73,6 +74,14 @@ class TestPipeline(unittest.TestCase):
             pipeline = PntCPipeline(las, CITY_FILE_PATH, "Westervoort")
             points_before = len(pipeline.las.points)
             pipeline.clip_by_arbitrary_polygon(WESTERVOORT_FILE_PATH)
+            points_after = len(pipeline.las.points)
+            self.assertTrue(points_after < points_before)
+
+        with laspy.open(TEST_DATA1) as reader:
+            las = reader.read()
+            pipeline = PntCPipeline(las, CITY_FILE_PATH, "Westervoort", 28992)
+            points_before = len(pipeline.las.points)
+            pipeline.clip_by_arbitrary_polygon(WESTERVOORT28992_FILE_PATH)
             points_after = len(pipeline.las.points)
             self.assertTrue(points_after < points_before)
 

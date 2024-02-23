@@ -1,15 +1,13 @@
 import laspy
-import pyvista as pv
+import polyscope as ps
 
 
 def previewer(filepath: str) -> None:
     # Read LAS file
     las = laspy.read(filepath)
+    points = las.xyz
 
-    points = pv.PolyData(las.xyz)
+    ps.init()
+    _ps_cloud = ps.register_point_cloud("AHN Point Cloud", points)
 
-    # Plot using PyVista
-    plotter = pv.Plotter()
-    plotter.add_points(points, color="blue", point_size=3)
-
-    plotter.show()
+    ps.show()

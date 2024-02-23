@@ -23,9 +23,10 @@ click = "^8.1.7"
 geopandas = "^0.14.1"
 shapely = "^2.0.2"
 laspy = {extras = ["lazrs"], version = "^2.5.3"}
-pyvista = "^0.43.1"
 requests = "^2.31.0"
 rasterio = "^1.3.9"
+tqdm = "^4.66.2"
+polyscope = "^2.1.0"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -1,6 +1,8 @@
+import logging
 import os
 
 import numpy as np
+from tqdm import tqdm
 from ahn_cli.fetcher.request import Fetcher
 from ahn_cli.manipulator.pipeline import PntCPipeline
 from ahn_cli.manipulator.preview import previewer
@@ -26,7 +28,10 @@ def process(
     fetched_files = ahn_fetcher.fetch()
 
     files = list(fetched_files.values())
-    for i, file in enumerate(files):
+    for i, file in enumerate(
+        tqdm(files, desc="Processing files", unit="file", total=len(files))
+    ):
+        logging.info("Start processing downloaded files...")
         with laspy.open(file) as las:
             if i == 0:
                 global_header = las.header

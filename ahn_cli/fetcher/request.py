@@ -5,6 +5,7 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 from threading import Lock
 from urllib.parse import urlparse
+from tqdm import tqdm
 
 import requests
 
@@ -23,23 +24,29 @@ class Fetcher:
         logging.info("Start fetching AHN data")
         logging.info(f"Fetching {len(self.urls)} tiles")
 
-        def req(url: str, nth: int, results: dict, lock: Lock) -> None:
-            logging.info(f"Fetching tile {nth + 1}/{len(self.urls)}")
-            print(f"Fetching tile {nth + 1}/{len(self.urls)}")
+        def req(
+            url: str, nth: int, results: dict, lock: Lock, pbar: tqdm
+        ) -> None:
             res = requests.get(url, stream=True)
             with tempfile.NamedTemporaryFile(
                 delete=False, mode="w+b", suffix=".laz"
             ) as temp_file:
-                for chunk in res.iter_content(chunk_size=1024 * 1024):
+                for chunk in tqdm(
+                    res.iter_content(chunk_size=1024 * 1024),
+                    desc="writing a file",
+                ):
                     temp_file.write(chunk)
                 with lock:
                     results[url] = temp_file.name
+            pbar.update(1)
 
         results: dict = {}
         lock = threading.Lock()
-        with ThreadPoolExecutor(max_workers=8) as executor:
-            for i, url in enumerate(self.urls):
-                executor.submit(req, url, i, results, lock)
+        with tqdm(total=len(self.urls)) as pbar:
+            pbar.set_description("Fetching AHN data")
+            with ThreadPoolExecutor(max_workers=8) as executor:
+                for i, url in enumerate(self.urls):
+                    executor.submit(req, url, i, results, lock, pbar)
         return results
 
     def _check_valid_url(self, url: str) -> bool:
