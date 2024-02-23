@@ -2,6 +2,8 @@ name: CI
 
 on:
   push:
+    branches:
+      - main
     paths-ignore:
       - "requirements.txt"
       - "requirements.dev.txt"
@@ -40,11 +42,11 @@ jobs:
 
       - name: Linting
         run: |
-          poetry run pylint ./ahn_cli/**/*.py
+          make lint
 
       - name: Type checking
         run: |
-          poetry run mypy ./ahn_cli/**/*.py
+          make type
 
       - name: Testing
         run: poetry run pytest ./ahn_cli/**/*.py --cov=./ahn_cli
