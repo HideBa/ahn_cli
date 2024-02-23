@@ -49,7 +49,7 @@ jobs:
           make type
 
       - name: Testing
-        run: poetry run pytest ./ahn_cli/**/*.py
+        run: make test
 
       - name: Export requirements
         run: |
