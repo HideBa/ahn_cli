@@ -51,15 +51,15 @@ jobs:
       - name: Testing
         run: make test
 
-      - name: Export requirements
-        run: |
-          poetry export --dev --format requirements.txt --output requirements.txt
-          poetry export --dev --format requirements.txt --output requirements.dev.txt
+      # - name: Export requirements
+      #   run: |
+      #     poetry export --dev --format requirements.txt --output requirements.txt
+      #     poetry export --dev --format requirements.txt --output requirements.dev.txt
 
-      - name: Commit exported requirements
-        run: |
-          git config --global user.name "${{ secrets.GH_USER_NAME }}"
-          git config --global user.email "${{ secrets.GH_USER_EMAIL }}"
-          git add requirements.txt requirements.dev.txt
-          git commit -m "Update requirements"
-          git push origin main
+      # - name: Commit exported requirements
+      #   run: |
+      #     git config --global user.name "${{ secrets.GH_USER_NAME }}"
+      #     git config --global user.email "${{ secrets.GH_USER_EMAIL }}"
+      #     git add requirements.txt requirements.dev.txt
+      #     git commit -m "Update requirements"
+      #     git push origin main
