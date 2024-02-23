@@ -8,8 +8,6 @@ on:
       - "requirements.txt"
       - "requirements.dev.txt"
   pull_request:
-    branches:
-      - main
 
 jobs:
   ci:
@@ -23,49 +21,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.11.1
-
-      - name: Install PDAL
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-          g++ \
-          cmake \
-          git \
-          libgdal-dev \
-          libgeotiff-dev \
-          liblaszip-dev \
-          libboost-all-dev \
-          libboost-program-options-dev \
-          libboost-filesystem-dev \
-          libboost-system-dev \
-          libsqlite3-dev \
-          sqlite3 \
-          libproj-dev \
-          libcurl4-openssl-dev \
-          libjsoncpp-dev \
-          libxml2-dev \
-          libflann-dev \
-          libpcl-dev \
-          libeigen3-dev \
-          libnitro-dev \
-          libqhull-dev \
-          libtbb-dev
-      - name: Clone PDAL
-        run: |
-          git clone https://github.com/PDAL/PDAL.git
-          cd PDAL
-          git checkout 2.5-maintenance
-          mkdir build
-          cd build
-          cmake ..
-          make
-          sudo make install
-          sudo ldconfig
-          pdal --version
-      - name: Check pdal
-        run: |
-          echo "PDAL version -------------"
-          pdal --version
 
       - name: Cache pip packages
         uses: actions/cache@v2
@@ -84,36 +39,27 @@ jobs:
       - name: Install dependencies
         run: |
           poetry install
-      # - name: Install dependencies excluding PDAL
-      #   run: |
-      #     poetry add pdal --optional
-      #     poetry install --no-root
-
-      # - name: Install PDAL Python package
-      #   run: |
-      #     source .venv/bin/activate
-      #     pip install pdal==3.2.3
 
       - name: Linting
         run: |
-          poetry run pylint ./ahn_cli/**/*.py
+          make lint
 
       - name: Type checking
         run: |
-          poetry run mypy ./ahn_cli/**/*.py
+          make type
 
       - name: Testing
-        run: poetry run pytest ./ahn_cli/**/*.py --cov=./ahn_cli
+        run: make test
 
-      - name: Export requirements
-        run: |
-          poetry export --dev --format requirements.txt --output requirements.txt
-          poetry export --dev --format requirements.txt --output requirements.dev.txt
+      # - name: Export requirements
+      #   run: |
+      #     poetry export --dev --format requirements.txt --output requirements.txt
+      #     poetry export --dev --format requirements.txt --output requirements.dev.txt
 
-      - name: Commit exported requirements
-        run: |
-          git config --global user.name "${{ secrets.GH_USER_NAME }}"
-          git config --global user.email "${{ secrets.GH_USER_EMAIL }}"
-          git add requirements.txt requirements.dev.txt
-          git commit -m "Update requirements"
-          git push origin main
+      # - name: Commit exported requirements
+      #   run: |
+      #     git config --global user.name "${{ secrets.GH_USER_NAME }}"
+      #     git config --global user.email "${{ secrets.GH_USER_EMAIL }}"
+      #     git add requirements.txt requirements.dev.txt
+      #     git commit -m "Update requirements"
+      #     git push origin main

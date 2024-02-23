@@ -36,7 +36,8 @@ Options:
  -ncc, --no-clip-city          Avoid clipping the point cloud data to the city boundary.
  -cf, --clip-file <file>       Provide a file path for a clipping boundary file to clip
                                the point cloud data to a specified area.
- -r, --radius <radius>         Define a radius (in meters) to clip the point cloud data,
+ -e, --epsg <epsg>             Set the EPSG code for user's clip file.
+ -b, --bbox <bbox>             Specify a bounding box to clip the point cloud data. It should be comma-separated list with minx,miny,maxx,maxy
                                centered on the city polygon.
  -p, --preview                 Preview the point cloud data in a 3D viewer.
  -h, --help [category]         Show help information. Optionally specify a category for
@@ -70,9 +71,13 @@ ahn_cli -c delft -o ./delft.laz -i 1,2 -ncc
 ahn_cli -c delft -o ./delft.laz -i 1,2 -d 2
 ```
 
-**Specify a Radius for Clipping:**
+**Specify a Bounding box for clipping:**
 
-If you specify a `radius` (in meters), it will clip the point cloud data from the center of the city polygon to the specified radius.
+If you specify a `b`, it will clip the point cloud data with specified bounding box.
+```
+ahn_cli -c delft -o ./delft.laz -i 1,2 -d 2 -b 194198.302994,443461.343994,194594.109009,443694.838989
+```
+
 
 ## Reporting Issues
 
