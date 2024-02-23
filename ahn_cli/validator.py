@@ -11,8 +11,6 @@ def validate_output(output: str) -> str:
         raise ValueError("Output path is required.")
     if not os.path.exists(os.path.dirname(output)):
         raise ValueError("Output directory does not exist.")
-    if os.path.exists(output):
-        raise ValueError("Output file already exists.")
     return output
 
 
@@ -63,6 +61,14 @@ def validate_clip_file(clip_file: str | None) -> str | None:
     return clip_file
 
 
+def validate_epsg(epsg: int | None) -> int | None:
+    if epsg is None:
+        return None
+    if epsg < 1000 or epsg > 999999:
+        raise ValueError("EPSG code is not valid.")
+    return epsg
+
+
 def validate_decimate(decimate: int | None) -> int | None:
     if decimate is None:
         return None
@@ -81,14 +87,6 @@ def validate_bbox(bbox: list[float] | None) -> list[float] | None:
     return bbox
 
 
-def validate_radius(radius: int | None) -> int | None:
-    if radius is None:
-        return None
-    if radius < 1:
-        raise ValueError("Radius must be greater than 0.")
-    return radius
-
-
 def validate_all(
     cfg: config.Config,
     output_path: str,
@@ -97,9 +95,9 @@ def validate_all(
     exclude_classes: list[int] | None = None,
     no_clip_city: bool | None = False,
     clip_file: str | None = None,
+    epsg: int | None = None,
     decimate: int | None = None,
     bbox: list[float] | None = None,
-    radius: int | None = None,
 ) -> bool:
     validate_output(output_path)
     validate_city(city_name, cfg.city_polygon_file)
@@ -107,7 +105,7 @@ def validate_all(
     validate_exclude_classes(exclude_classes)
     validate_include_exclude(include_classes, exclude_classes)
     validate_clip_file(clip_file)
+    validate_epsg(epsg)
     validate_decimate(decimate)
     validate_bbox(bbox)
-    validate_radius(radius)
     return True

@@ -19,8 +19,8 @@ Options:
  -ncc --no-clip-city           Do not clip the point cloud data to the city boundary.
  -cf, --clip-file <file>       Specify a file path to a clipping boundary file. The tool will
                                use this file to clip the point cloud data to a specific area.
+ -e, --epsg <epsg>             Set the EPSG code for user's clip file.
  -b, --bbox <bbox>             Specify a bounding box to clip the point cloud data. It should be comma-separated list with minx,miny,maxx,maxy
- -r, --radius <radius>         Set the radius of the circle to clip the point cloud data to. Unit is in meter.
  -p, --preview                 Preview the point cloud data in a 3D viewer.
  -h, --help [category]         Display help information. Optionally, specify a category to get
                                more detailed help for a specific command.
@@ -70,6 +70,12 @@ Options:
     help="Specify a file path to a clipping boundary file. The tool will use this file to clip the point cloud data to a specific area.",
 )
 @click.option(
+    "-e",
+    "--epsg",
+    type=int,
+    help="Set the EPSG code for user's clip file.",
+)
+@click.option(
     "-d",
     "--decimate",
     type=int,
@@ -80,12 +86,6 @@ Options:
     "--bbox",
     type=str,
     help="Specify a bounding box to clip the point cloud data. It should be comma-separated list with minx,miny,maxx,maxy",
-)
-@click.option(
-    "-r",
-    "--radius",
-    type=int,
-    help="Set the radius of the circle to clip the point cloud data to. Unit is in meter.",
 )
 @click.option(
     "-p",
@@ -110,13 +110,13 @@ def main(**kwargs: Any) -> None:
     )
     no_clip_city = params.get("no_clip_city")
     clip_file = params.get("clip_file")
+    epsg = params.get("epsg")
     decimate = params.get("decimate")
     bbox = (
         [float(x) for x in str(params.get("bbox", "")).split(",")]
         if params.get("bbox", "")
         else None
     )
-    radius = params.get("radius")
     preview = params.get("preview")
     if validate_all(
         cfg,
@@ -126,9 +126,9 @@ def main(**kwargs: Any) -> None:
         exclude_classes,
         no_clip_city,
         clip_file,
+        epsg,
         decimate,
         bbox,
-        radius,
     ):
         process(
             cfg.geotiles_base_url,
@@ -139,8 +139,9 @@ def main(**kwargs: Any) -> None:
             exclude_classes,
             no_clip_city,
             clip_file,
+            epsg,
+            decimate,
             bbox,
-            radius,
             preview,
         )
 
