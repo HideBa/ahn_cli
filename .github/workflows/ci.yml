@@ -8,8 +8,6 @@ on:
       - "requirements.txt"
       - "requirements.dev.txt"
   pull_request:
-    branches:
-      - main
 
 jobs:
   ci:
