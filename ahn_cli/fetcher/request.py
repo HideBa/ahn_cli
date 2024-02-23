@@ -5,9 +5,9 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 from threading import Lock
 from urllib.parse import urlparse
-from tqdm import tqdm
 
 import requests
+from tqdm import tqdm
 
 from ahn_cli.fetcher.geotiles import ahn_subunit_indicies_of_city
 
