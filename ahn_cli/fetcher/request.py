@@ -32,7 +32,7 @@ class Fetcher:
                 delete=False, mode="w+b", suffix=".laz"
             ) as temp_file:
                 for chunk in tqdm(
-                    res.iter_content(chunk_size=1024 * 1024),
+                    res.iter_content(chunk_size=500 * 1024 * 1024),
                     desc="writing a file",
                 ):
                     temp_file.write(chunk)
