@@ -10,20 +10,26 @@ from ahn_cli.manipulator import rasterizer
 from ahn_cli.manipulator.transformer import tranform_polygon
 
 
-class PntCPipeline:
+class PntCHandler:
     """
-    A class representing a data processing pipeline.
-
-    Args:
-        input_path (str): The path to the input data.
-        output_path (str): The path to save the output data.
-        city_filepath (str): The path to the city data file.
-        city_name (str): The name of the city.
-        epsg (int): The EPSG code for the coordinate reference system (CRS).
+    A class for handling point clouds.
 
     Attributes:
-        pipeline_setting (list): The configuration settings for the pipeline.
+        las (laspy.LasData): The point cloud data.
+        city_df (gpd.GeoDataFrame): The city data.
+        city_name (str): The name of the city.
+        raster_res (float): The raster resolution.
+        epsg (str | None): The EPSG code.
 
+    Methods:
+        __init__: Initializes the PntCHandler object.
+        decimate: Decimates the point cloud by selecting every `step`-th point.
+        include: Filters the point cloud to include only the specified classes.
+        exclude: Exclude points with specific classification values from the pipeline.
+        clip: Clip the point cloud by a polygon.
+        clip_by_arbitrary_polygon: Clip the point cloud by an arbitrary polygon.
+        clip_by_bbox: Clips the point cloud by a bounding box.
+        points: Execute the pipeline and return the processed point cloud.
     """
 
     las = laspy.LasData
@@ -46,27 +52,27 @@ class PntCPipeline:
 
     def decimate(self, step: int) -> Self:
         """
-        Decimate the point cloud by a given step.
+        Decimates the point cloud by selecting every `step`-th point.
 
         Args:
-            step (int): The step to decimate by.
+            step (int): The decimation step size.
 
         Returns:
-            Pipeline: The updated pipeline object.
-
+            Self: The modified pipeline object.
         """
-        self.las.points = self.las.points[::step]
+        valid_point_masks = np.arange(0, len(self.las.points), step)
+        self.las.points = self.las.points[valid_point_masks]
         return self
 
     def include(self, include_classes: list[int]) -> Self:
         """
-        Filters the point cloud to include only the specified classes.
+        Filters the point cloud by including only the specified classes.
 
         Args:
-            include_classes (list[int]): List of class labels to include.
+            include_classes (list[int]): A list of class IDs to include.
 
         Returns:
-            Self: The modified pipeline object.
+            Self: The updated instance of the pipeline.
         """
         mask = np.isin(self.las.classification, include_classes)
         self.las.points = self.las.points[mask]
@@ -74,13 +80,14 @@ class PntCPipeline:
 
     def exclude(self, exclude_classes: list[int]) -> Self:
         """
-        Exclude points with specific classification values from the pipeline.
+        Exclude points from the point cloud based on their classification.
 
         Args:
-            exclude_classes (list[int]): List of classification values to exclude.
+            exclude_classes (list[int]): List of classification codes to exclude.
 
         Returns:
             Self: The modified pipeline object.
+
         """
         mask = np.isin(self.las.classification, exclude_classes, invert=True)
         self.las.points = self.las.points[mask]
@@ -88,7 +95,10 @@ class PntCPipeline:
 
     def clip(self) -> Self:
         """
-        Clip the point cloud by a polygon.
+        Clips the point cloud to the extent of the city polygon.
+
+        Returns:
+            Self: The modified pipeline object.
         """
         rasterized_polygon, transform = rasterizer.polygon_to_raster(
             self._city_polygon(), self.raster_res
@@ -118,15 +128,15 @@ class PntCPipeline:
 
     def clip_by_arbitrary_polygon(self, clip_file: str) -> Self:
         """
-        Clip the point cloud by a polygon.
+        Clips the point cloud by an arbitrary polygon defined in a clip file.
 
         Args:
-            clip_file (str): The path to the polygon file.
+            clip_file (str): The path to the clip file containing the polygon.
 
         Returns:
-            Pipeline: The updated pipeline object.
-
+            Self: The modified instance of the pipeline.
         """
+
         polygon = self._arbitrary_polygon(clip_file)
         rasterized_polygon, transform = rasterizer.polygon_to_raster(
             polygon, self.raster_res
@@ -156,28 +166,28 @@ class PntCPipeline:
 
     def clip_by_bbox(self, bbox: list[float]) -> Self:
         """
-        Clips the point cloud by a bounding box.
+        Clips the point cloud by a given bounding box.
 
         Args:
-            bbox (list[float]): The bounding box to clip the point cloud. [xmin, ymin, xmax, ymax]
+            bbox (list[float]): The bounding box coordinates in the format [xmin, ymin, xmax, ymax].
 
         Returns:
-            Self: The updated pipeline object.
-
+            Self: The modified instance of the pipeline.
         """
-        xyz = self.las.xyz
-        x_valid = (xyz[:, 0] >= bbox[0]) & (xyz[:, 0] <= bbox[2])
-        y_valid = (xyz[:, 1] >= bbox[1]) & (xyz[:, 1] <= bbox[3])
-        valid_points_mask = x_valid & y_valid
+
+        x_valid = (self.las.x >= bbox[0]) & (self.las.x <= bbox[2])
+        y_valid = (self.las.y >= bbox[1]) & (self.las.y <= bbox[3])
+        valid_points_mask = np.where(x_valid & y_valid)[0]
         self.las.points = self.las.points[valid_points_mask]
+
         return self
 
     def points(self) -> laspy.LasData:
         """
-        Execute the pipeline.
+        Returns the point cloud data.
 
         Returns:
-            laspy.LasData: The processed point cloud.
+            laspy.LasData: The point cloud data.
         """
         return self.las
 

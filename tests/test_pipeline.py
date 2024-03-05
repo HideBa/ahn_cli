@@ -1,10 +1,9 @@
-import time
 import unittest
 
 import laspy
 import numpy as np
 
-from ahn_cli.manipulator.pipeline import PntCPipeline
+from ahn_cli.manipulator.ptc_handler import PntCHandler
 
 TEST_DATA0 = "./tests/testdata/westervoort0_thinned.las"
 TEST_DATA1 = "./tests/testdata/westervoort1_thinned.las"
@@ -13,23 +12,23 @@ WESTERVOORT_FILE_PATH = "./tests/testdata/westervoort.geojson"
 WESTERVOORT28992_FILE_PATH = "./tests/testdata/westervoort28992.geojson"
 
 
-class TestPipeline(unittest.TestCase):
+class TestPntCHandler(unittest.TestCase):
     def test_decimate(self) -> None:
         with laspy.open(TEST_DATA0) as reader:
             las = reader.read()
-            pipeline = PntCPipeline(las, CITY_FILE_PATH, "Westervoort")
-            points_before = len(pipeline.las.points)
-            pipeline.decimate(10)
-            points_after = len(pipeline.las.points)
+            p_handler = PntCHandler(las, CITY_FILE_PATH, "Westervoort")
+            points_before = len(p_handler.las.points)
+            p_handler.decimate(10)
+            points_after = len(p_handler.las.points)
             self.assertTrue(points_after < points_before)
 
     def test_include(self) -> None:
         with laspy.open(TEST_DATA0) as reader:
             las = reader.read()
-            pipeline = PntCPipeline(las, CITY_FILE_PATH, "Westervoort")
-            points_before = len(pipeline.las.points)
-            pipeline.include([2, 6])
-            points_after = len(pipeline.las.points)
+            p_handler = PntCHandler(las, CITY_FILE_PATH, "Westervoort")
+            points_before = len(p_handler.las.points)
+            p_handler.include([2, 6])
+            points_after = len(p_handler.las.points)
             self.assertTrue(points_after < points_before)
             classes2 = len(las.points[las.classification == 2])
             classes6 = len(las.points[las.classification == 6])
@@ -47,10 +46,10 @@ class TestPipeline(unittest.TestCase):
     def test_exclude(self) -> None:
         with laspy.open(TEST_DATA0) as reader:
             las = reader.read()
-            pipeline = PntCPipeline(las, CITY_FILE_PATH, "Westervoort")
-            points_before = len(pipeline.las.points)
-            pipeline.exclude([2, 6])
-            points_after = len(pipeline.las.points)
+            p_handler = PntCHandler(las, CITY_FILE_PATH, "Westervoort")
+            points_before = len(p_handler.las.points)
+            p_handler.exclude([2, 6])
+            points_after = len(p_handler.las.points)
             self.assertTrue(points_after < points_before)
             classes2 = len(las.points[las.classification == 2])
             classes6 = len(las.points[las.classification == 6])
@@ -62,38 +61,38 @@ class TestPipeline(unittest.TestCase):
             las = reader.read()
             extra_dim = laspy.ExtraBytesParams(name="raster", type=np.uint8)
             las.add_extra_dim(extra_dim)
-            pipeline = PntCPipeline(las, CITY_FILE_PATH, "Westervoort")
-            points_before = len(pipeline.las.points)
-            pipeline.clip()
-            points_after = len(pipeline.las.points)
+            p_handler = PntCHandler(las, CITY_FILE_PATH, "Westervoort")
+            points_before = len(p_handler.las.points)
+            p_handler.clip()
+            points_after = len(p_handler.las.points)
             self.assertTrue(points_after < points_before)
 
     def test_clip_by_arbitrary_polygon(self) -> None:
         with laspy.open(TEST_DATA1) as reader:
             las = reader.read()
-            pipeline = PntCPipeline(las, CITY_FILE_PATH, "Westervoort")
-            points_before = len(pipeline.las.points)
-            pipeline.clip_by_arbitrary_polygon(WESTERVOORT_FILE_PATH)
-            points_after = len(pipeline.las.points)
+            p_handler = PntCHandler(las, CITY_FILE_PATH, "Westervoort")
+            points_before = len(p_handler.las.points)
+            p_handler.clip_by_arbitrary_polygon(WESTERVOORT_FILE_PATH)
+            points_after = len(p_handler.las.points)
             self.assertTrue(points_after < points_before)
 
         with laspy.open(TEST_DATA1) as reader:
             las = reader.read()
-            pipeline = PntCPipeline(las, CITY_FILE_PATH, "Westervoort", 28992)
-            points_before = len(pipeline.las.points)
-            pipeline.clip_by_arbitrary_polygon(WESTERVOORT28992_FILE_PATH)
-            points_after = len(pipeline.las.points)
+            p_handler = PntCHandler(las, CITY_FILE_PATH, "Westervoort", 28992)
+            points_before = len(p_handler.las.points)
+            p_handler.clip_by_arbitrary_polygon(WESTERVOORT28992_FILE_PATH)
+            points_after = len(p_handler.las.points)
             self.assertTrue(points_after < points_before)
 
     def test_clip_by_bbox(self) -> None:
         with laspy.open(TEST_DATA0) as reader:
             las = reader.read()
-            pipeline = PntCPipeline(las, CITY_FILE_PATH, "Westervoort")
-            points_before = len(pipeline.las.points)
-            pipeline.clip_by_bbox(
+            p_handler = PntCHandler(las, CITY_FILE_PATH, "Westervoort")
+            points_before = len(p_handler.las.points)
+            p_handler.clip_by_bbox(
                 [194198.302994, 443461.343994, 194594.109009, 443694.838989]
             )
-            points_after = len(pipeline.las.points)
+            points_after = len(p_handler.las.points)
             self.assertTrue(points_after < points_before)
 
 

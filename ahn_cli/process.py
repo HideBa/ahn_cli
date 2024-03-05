@@ -4,7 +4,7 @@ import os
 import numpy as np
 from tqdm import tqdm
 from ahn_cli.fetcher.request import Fetcher
-from ahn_cli.manipulator.pipeline import PntCPipeline
+from ahn_cli.manipulator.ptc_handler import PntCHandler
 from ahn_cli.manipulator.preview import previewer
 import laspy
 from laspy.lasappender import LasAppender
@@ -24,7 +24,7 @@ def process(
     bbox: list[float] | None = None,
     preview: bool | None = False,
 ) -> None:
-    ahn_fetcher = Fetcher(base_url, city_name)
+    ahn_fetcher = Fetcher(base_url, city_name, bbox)
     fetched_files = ahn_fetcher.fetch()
 
     files = list(fetched_files.values())
@@ -43,7 +43,7 @@ def process(
             global_header.maxs = maxs
             global_header.mins = mins
 
-            pipeline = PntCPipeline(
+            p_handler = PntCHandler(
                 las.read(),
                 city_polygon_path,
                 city_name,
@@ -51,25 +51,28 @@ def process(
             )
 
             if bbox is not None:
-                pipeline.clip_by_bbox(bbox)
-            if decimate is not None:
-                pipeline.decimate(decimate)
+                p_handler.clip_by_bbox(bbox)
             if include_classes is not None and len(include_classes) > 0:
-                pipeline.include(include_classes)
+                p_handler.include(include_classes)
             if exclude_classes is not None and len(exclude_classes) > 0:
-                pipeline.exclude(exclude_classes)
-            if not no_clip_city:
-                pipeline.clip()
+                p_handler.exclude(exclude_classes)
+            if not no_clip_city and city_name is not None:
+                p_handler.clip()
             if clip_file is not None:
-                pipeline.clip_by_arbitrary_polygon(clip_file)
+                p_handler.clip_by_arbitrary_polygon(clip_file)
+            if decimate is not None:
+                p_handler.decimate(decimate)
 
             with laspy.open(
                 output_path, mode="w" if i == 0 else "a", header=global_header
             ) as writer:
-                points = pipeline.points().points
+                points = p_handler.points().points
+                if len(points) == 0:
+                    continue
                 points.x = points.x - offset[0]
                 points.y = points.y - offset[1]
                 points.z = points.z - offset[2]
+
                 if isinstance(writer, laspy.LasWriter):
                     writer.write_points(points)
                 if isinstance(writer, LasAppender):

@@ -1,9 +1,12 @@
 import unittest
-from ahn_cli.fetcher.geotiles import ahn_subunit_indicies_of_city
+from ahn_cli.fetcher.geotiles import (
+    ahn_subunit_indicies_of_city,
+    ahn_subunit_indicies_of_bbox,
+)
 
 
 class TestGeoTile(unittest.TestCase):
-    def test_ahn(self) -> None:
+    def test_ahn_subunit_indicies_of_city(self) -> None:
         tiles = ahn_subunit_indicies_of_city("Delft")
         expected = [
             "37EZ1_03",
@@ -42,6 +45,28 @@ class TestGeoTile(unittest.TestCase):
             "37EN2_23",
         ]
         self.assertEqual(tiles, expected)
+
+    def test_ahn_subunit_indicies_of_bbox(self) -> None:
+        bbox = [
+            84592.705048133007949,
+            444443.127025160647463,
+            86312.074818017281359,
+            446712.346010794688482,
+        ]
+        tiles = ahn_subunit_indicies_of_bbox(bbox)
+        expected = [
+            "37EN1_15",
+            "37EN1_20",
+            "37EN1_25",
+            "37EN2_11",
+            "37EN2_12",
+            "37EN2_16",
+            "37EN2_17",
+            "37EN2_21",
+            "37EN2_22",
+        ]
+
+        self.assertListEqual(tiles, expected)
 
 
 if __name__ == "__main__":

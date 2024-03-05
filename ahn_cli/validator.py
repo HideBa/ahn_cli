@@ -100,7 +100,8 @@ def validate_all(
     bbox: list[float] | None = None,
 ) -> bool:
     validate_output(output_path)
-    validate_city(city_name, cfg.city_polygon_file)
+    if not bbox:
+        validate_city(city_name, cfg.city_polygon_file)
     validate_include_classes(include_classes)
     validate_exclude_classes(exclude_classes)
     validate_include_exclude(include_classes, exclude_classes)

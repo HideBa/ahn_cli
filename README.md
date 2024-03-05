@@ -10,8 +10,6 @@ AHN CLI is a command-line interface tool designed for the effortless downloading
 
 ## Installation
 
-> **NOTE:** AHN CLI requires PDAL to be installed on your system. Follow the installation instructions in the [PDAL documentation](https://pdal.io/download.html) before proceeding.
-
 Install AHN CLI using pip:
 
 ```
