@@ -9,18 +9,54 @@ from urllib.parse import urlparse
 import requests
 from tqdm import tqdm
 
-from ahn_cli.fetcher.geotiles import ahn_subunit_indicies_of_city
+from ahn_cli.fetcher.geotiles import (ahn_subunit_indicies_of_bbox,
+                                      ahn_subunit_indicies_of_city)
 
 
 class Fetcher:
-    def __init__(self, base_url: str, city_name: str):
+    """
+    Fetcher class for fetching AHN data.
+
+    Args:
+        base_url (str): The base URL for fetching AHN data.
+        city_name (str): The name of the city for which to fetch AHN data.
+        bbox (list[float] | None, optional): The bounding box coordinates [minx, miny, maxx, maxy]
+            for a specific area of interest. Defaults to None.
+
+    Raises:
+        ValueError: If the base URL is invalid.
+
+    Attributes:
+        base_url (str): The base URL for fetching AHN data.
+        city_name (str): The name of the city for which to fetch AHN data.
+        bbox (list[float] | None): The bounding box coordinates [minx, miny, maxx, maxy]
+            for a specific area of interest.
+        urls (list[str]): The constructed URLs for fetching AHN data.
+
+    Methods:
+        fetch: Fetches AHN data.
+        _check_valid_url: Checks if the base URL is valid.
+        _construct_urls: Constructs the URLs for fetching AHN data.
+    """
+
+    def __init__(
+        self, base_url: str, city_name: str, bbox: list[float] | None = None
+    ):
         if not self._check_valid_url(base_url):
             raise ValueError("Invalid URL")
         self.base_url = base_url
         self.city_name = city_name
+        self.bbox = bbox
         self.urls = self._construct_urls()
 
     def fetch(self) -> dict:
+        """
+        Fetches AHN data.
+
+        Returns:
+            dict: A dictionary containing the fetched AHN data, where the keys are the URLs
+            and the values are the temporary file names where the data is stored.
+        """
         logging.info("Start fetching AHN data")
         logging.info(f"Fetching {len(self.urls)} tiles")
 
@@ -50,6 +86,15 @@ class Fetcher:
         return results
 
     def _check_valid_url(self, url: str) -> bool:
+        """
+        Checks if the base URL is valid.
+
+        Args:
+            url (str): The base URL to check.
+
+        Returns:
+            bool: True if the URL is valid, False otherwise.
+        """
         try:
             result = urlparse(url)
             return all([result.scheme, result.netloc, result.path])
@@ -57,9 +102,18 @@ class Fetcher:
             return False
 
     def _construct_urls(self) -> list[str]:
-        tiles_indices = ahn_subunit_indicies_of_city(self.city_name)
+        """
+        Constructs the URLs for fetching AHN data.
+
+        Returns:
+            list[str]: A list of URLs for fetching AHN data.
+        """
+        tiles_indices = (
+            ahn_subunit_indicies_of_bbox(self.bbox)
+            if self.bbox
+            else ahn_subunit_indicies_of_city(self.city_name)
+        )
         urls = []
         for tile_index in tiles_indices:
             urls.append(os.path.join(self.base_url + f"{tile_index}.LAZ"))
-
         return urls
