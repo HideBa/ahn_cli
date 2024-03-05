@@ -1,3 +1,10 @@
+
+# Changelog
+## [0.1.6] - 2024-03-05
+### Changed
+* Make `city` parameter as optional when bbox is specified
+* Refactor and rename `pipeline` as it's not pipeline anymore
+
 # Changelog
 ## [0.1.6] - 2024-02-23
 ### Changed
