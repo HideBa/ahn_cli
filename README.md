@@ -73,7 +73,7 @@ ahn_cli -c delft -o ./delft.laz -i 1,2 -d 2
 
 If you specify a `b`, it will clip the point cloud data with specified bounding box.
 ```
-ahn_cli -c delft -o ./delft.laz -i 1,2 -d 2 -b 194198.302994,443461.343994,194594.109009,443694.838989
+ahn_cli -o ./delft.laz -i 1,2 -b 194198.0,443461.0,194594.0,443694.0
 ```
 
 
